@@ -16,7 +16,7 @@ import com.github.skykai.stickercamera.R;
 
 /**
  * 首页标题栏
- * 
+ *
  * @author ouyezi
  */
 public class CommonTitleBar extends RelativeLayout {
@@ -24,16 +24,16 @@ public class CommonTitleBar extends RelativeLayout {
     // 防重复点击时间
     private static final int BTN_LIMIT_TIME = 500;
 
-    private TextView         leftButton;
-    private ImageView        leftButtonImg;
-    private TextView         middleButton;
-    private TextView         rightButton;
-    private ImageView        rightButtonImg;
-    private int              leftBtnIconId;
-    private String           leftBtnStr;
-    private String           titleTxtStr;
-    private String           rightBtnStr;
-    private int              rightBtnIconId;
+    private TextView leftButton;
+    private ImageView leftButtonImg;
+    private TextView middleButton;
+    private TextView rightButton;
+    private ImageView rightButtonImg;
+    private int leftBtnIconId;
+    private String leftBtnStr;
+    private String titleTxtStr;
+    private String rightBtnStr;
+    private int rightBtnIconId;
 
 
     public CommonTitleBar(Context context) {

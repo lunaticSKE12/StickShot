@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
-
 import com.customview.drawable.EditableDrawable;
 import com.customview.drawable.FeatherDrawable;
 import com.imagezoom.ImageViewTouch;
@@ -24,43 +23,48 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MyImageViewDrawableOverlay extends ImageViewTouch {
 
-    public static interface OnDrawableEventListener {
-        void onFocusChange(MyHighlightView newFocus, MyHighlightView oldFocus);
+    boolean mScrollStarted;
 
-        void onDown(MyHighlightView view);
-
-        void onMove(MyHighlightView view);
-
-        void onClick(MyHighlightView view);
-
-        //标签的点击事件处理
-        void onClick(LabelView label);
-    };
-
+    ;
+    float mLastMotionScrollX, mLastMotionScrollY;
     //删除的时候会出错
-    private List<MyHighlightView>   mOverlayViews         = new CopyOnWriteArrayList<MyHighlightView>();
-
-    private MyHighlightView         mOverlayView;
-
+    private List<MyHighlightView> mOverlayViews = new CopyOnWriteArrayList<MyHighlightView>();
+    private MyHighlightView mOverlayView;
     private OnDrawableEventListener mDrawableListener;
-
-    private boolean                 mForceSingleSelection = true;
-
-    private Paint                   mDropPaint;
-
-    private Rect                    mTempRect             = new Rect();
-
-    private boolean                 mScaleWithContent     = false;
-
-    private List<LabelView>         labels                = new ArrayList<LabelView>();
+    private boolean mForceSingleSelection = true;
+    private Paint mDropPaint;
+    private Rect mTempRect = new Rect();
+    private boolean mScaleWithContent = false;
+    private List<LabelView> labels = new ArrayList<LabelView>();
     //当前被点击的标签
-    private LabelView               currentLabel;
-    //标签被点击的处与基本坐标的距离
-    private float                   labelX, labelY, downLabelX, downLabelY;
+    private LabelView currentLabel;
 
     /************************[BEGIN]贴纸处理**********************/
+    //标签被点击的处与基本坐标的距离
+    private float labelX, labelY, downLabelX, downLabelY;
+
+    /************************
+     * [END]贴纸处理
+     **********************/
+
+    public MyImageViewDrawableOverlay(Context context) {
+        super(context);
+        //setScrollEnabled(false);
+    }
+
+    public MyImageViewDrawableOverlay(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        //setScrollEnabled(false);
+    }
+
+    public MyImageViewDrawableOverlay(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        //setScrollEnabled(false);
+    }
+
     /**
      * 用于感知label被点击了
+     *
      * @param label
      * @param locationX
      * @param locationY
@@ -94,22 +98,22 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
     public boolean onTouchEvent(MotionEvent event) {
         if (currentLabel != null) {
             currentLabel.updateLocation((int) (event.getX() - labelX),
-                (int) (event.getY() - labelY));
+                    (int) (event.getY() - labelY));
             currentLabel.invalidate();
         }
         if (currentLabel != null) {
             switch (event.getAction()) {
-                case MotionEvent.ACTION_UP:// 手指离开时 
+                case MotionEvent.ACTION_UP:// 手指离开时
                 case MotionEvent.ACTION_CANCEL:
 
                     float upX = event.getRawX();
                     float upY = event.getRawY();
                     double distance = Math.sqrt(Math.abs(upX - downLabelX)
-                                                * Math.abs(upX - downLabelX)
-                                                + Math.abs(upY - downLabelY)
-                                                * Math.abs(upY - downLabelY));//两点之间的距离
+                            * Math.abs(upX - downLabelX)
+                            + Math.abs(upY - downLabelY)
+                            * Math.abs(upY - downLabelY));//两点之间的距离
                     if (distance < 15) { // 距离较小，当作click事件来处理
-                        if(mDrawableListener!=null){
+                        if (mDrawableListener != null) {
                             mDrawableListener.onClick(currentLabel);
                         }
                     }
@@ -121,23 +125,6 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
             return true;
         }
         return super.onTouchEvent(event);
-    }
-
-    /************************[END]贴纸处理**********************/
-
-    public MyImageViewDrawableOverlay(Context context) {
-        super(context);
-        //setScrollEnabled(false);
-    }
-
-    public MyImageViewDrawableOverlay(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        //setScrollEnabled(false);
-    }
-
-    public MyImageViewDrawableOverlay(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        //setScrollEnabled(false);
     }
 
     protected void panBy(double dx, double dy) {
@@ -156,27 +143,25 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
         mGestureDetector.setIsLongpressEnabled(false);
     }
 
-    /**
-     * How overlay content will be scaled/moved
-     * when zomming/panning the base image
-     * 
-     * @param value
-     *            true if content will scale according to the image
-     */
-    public void setScaleWithContent(boolean value) {
-        mScaleWithContent = value;
-    }
-
     public boolean getScaleWithContent() {
         return mScaleWithContent;
     }
 
     /**
+     * How overlay content will be scaled/moved
+     * when zomming/panning the base image
+     *
+     * @param value true if content will scale according to the image
+     */
+    public void setScaleWithContent(boolean value) {
+        mScaleWithContent = value;
+    }
+
+    /**
      * If true, when the user tap outside the drawable overlay and
      * there is only one active overlay selection is not changed.
-     * 
-     * @param value
-     *            the new force single selection
+     *
+     * @param value the new force single selection
      */
     public void setForceSingleSelection(boolean value) {
         mForceSingleSelection = value;
@@ -250,7 +235,7 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
                     final float currentScale = mvalues[Matrix.MSCALE_X];
 
                     cropRect.offset((rect1.left - rect2.left) / currentScale,
-                        (rect1.top - rect2.top) / currentScale);
+                            (rect1.top - rect2.top) / currentScale);
                     cropRect.right += -(rect2.width() - rect1.width()) / currentScale;
                     cropRect.bottom += -(rect2.height() - rect1.height()) / currentScale;
 
@@ -327,7 +312,7 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
 
         if (realNewSelection != null && mScaleWithContent) {
             RectF displayRect = realNewSelection.getDisplayRect(realNewSelection.getMatrix(),
-                realNewSelection.getCropRectF());
+                    realNewSelection.getCropRectF());
             boolean invalidSize = realNewSelection.getContent().validateSize(displayRect);
 
             Log.d(LOG_TAG, "invalidSize: " + invalidSize);
@@ -358,7 +343,7 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
                 Log.d(LOG_TAG, "zooming to: " + (getScale() * diff));
 
                 zoomTo(getScale() * diff, displayRect.centerX(), displayRect.centerY(),
-                    DEFAULT_ANIMATION_DURATION * 1.5f);
+                        DEFAULT_ANIMATION_DURATION * 1.5f);
                 return true;
             }
         }
@@ -368,7 +353,7 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
             int edge = mOverlayView.getHit(e.getX(), e.getY());
             if (edge != MyHighlightView.NONE) {
                 mOverlayView.setMode((edge == MyHighlightView.MOVE) ? MyHighlightView.MOVE
-                    : (edge == MyHighlightView.ROTATE ? MyHighlightView.ROTATE
+                        : (edge == MyHighlightView.ROTATE ? MyHighlightView.ROTATE
                         : MyHighlightView.GROW));
                 postInvalidate();
                 if (mDrawableListener != null) {
@@ -425,9 +410,6 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
 
         return super.onSingleTapUp(e);
     }
-
-    boolean mScrollStarted;
-    float   mLastMotionScrollX, mLastMotionScrollY;
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
@@ -576,6 +558,27 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
         return mOverlayView;
     }
 
+    public void setSelectedHighlightView(MyHighlightView newView) {
+
+        final MyHighlightView oldView = mOverlayView;
+
+        if (mOverlayView != null && !mOverlayView.equals(newView)) {
+            mOverlayView.setSelected(false);
+        }
+
+        if (newView != null) {
+            newView.setSelected(true);
+        }
+
+        postInvalidate();
+
+        mOverlayView = newView;
+
+        if (mDrawableListener != null) {
+            mDrawableListener.onFocusChange(newView, oldView);
+        }
+    }
+
     public void commit(Canvas canvas) {
 
         MyHighlightView hv;
@@ -610,25 +613,17 @@ public class MyImageViewDrawableOverlay extends ImageViewTouch {
         return selection;
     }
 
-    public void setSelectedHighlightView(MyHighlightView newView) {
+    public static interface OnDrawableEventListener {
+        void onFocusChange(MyHighlightView newFocus, MyHighlightView oldFocus);
 
-        final MyHighlightView oldView = mOverlayView;
+        void onDown(MyHighlightView view);
 
-        if (mOverlayView != null && !mOverlayView.equals(newView)) {
-            mOverlayView.setSelected(false);
-        }
+        void onMove(MyHighlightView view);
 
-        if (newView != null) {
-            newView.setSelected(true);
-        }
+        void onClick(MyHighlightView view);
 
-        postInvalidate();
-
-        mOverlayView = newView;
-
-        if (mDrawableListener != null) {
-            mDrawableListener.onFocusChange(newView, oldView);
-        }
+        //标签的点击事件处理
+        void onClick(LabelView label);
     }
 
 }

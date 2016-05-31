@@ -3,7 +3,7 @@
     android:id="@+id/label_selector"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/label_text_left"
@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/icon_biaoqian_i"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        android:paddingRight="12dp"
-        android:paddingTop="2dp"
         android:paddingBottom="2dp"
         android:paddingLeft="6dp"
+        android:paddingRight="12dp"
+        android:paddingTop="2dp"
         android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="13sp"
         android:visibility="invisible" />
 
     <ImageView
@@ -36,14 +36,14 @@
         android:layout_height="wrap_content"
         android:background="@drawable/icon_biaoqian"
         android:gravity="center"
+        android:paddingBottom="2dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="6dp"
+        android:paddingTop="2dp"
+        android:singleLine="true"
         android:text="LabelLabelLabel"
         android:textColor="@color/white"
         android:textSize="13sp"
-        android:singleLine="true"
-        android:paddingRight="6dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:paddingLeft="12dp"
         android:visibility="invisible" />
 
 </LinearLayout>

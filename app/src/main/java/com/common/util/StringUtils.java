@@ -133,8 +133,8 @@ public class StringUtils {
      * <p>
      * Checks if a String is whitespace, empty ("") or null.
      * </p>
-     * <p/>
-     *
+     * <p>
+     * <p>
      * <pre>
      * StringUtils.isBlank(null)      = true
      * StringUtils.isBlank("")        = true
@@ -178,8 +178,8 @@ public class StringUtils {
      * <p>
      * Checks if a String is not empty (""), not null and not whitespace only.
      * </p>
-     * <p/>
-     *
+     * <p>
+     * <p>
      * <pre>
      * StringUtils.isNotBlank(null)      = false
      * StringUtils.isNotBlank("")        = false
@@ -246,7 +246,7 @@ public class StringUtils {
      * <code>null</code> String will return <code>-1</code>.
      * </p>
      *
-     * @param str the String to check
+     * @param str        the String to check
      * @param searchStrs the Strings to search for
      * @return the first index of any of the searchStrs in str
      * @throws NullPointerException if any of searchStrs[i] is <code>null</code>
@@ -284,7 +284,7 @@ public class StringUtils {
      * <code>null</code> string will return <code>-1</code>.
      * </p>
      *
-     * @param str the String to check
+     * @param str        the String to check
      * @param searchStrs the Strings to search for
      * @return the last index of any of the Strings
      * @throws NullPointerException if any of searchStrs[i] is <code>null</code>
@@ -317,9 +317,9 @@ public class StringUtils {
      * A negative start position can be used to start <code>n</code> characters from the end of the String.
      * </p>
      *
-     * @param str the String to get the substring from
+     * @param str   the String to get the substring from
      * @param start the position to start from, negative means count back from the end of the String by this many
-     * characters
+     *              characters
      * @return substring from start position
      */
     public static String substring(String str, int start) {
@@ -351,11 +351,11 @@ public class StringUtils {
      * A negative start position can be used to start/end <code>n</code> characters from the end of the String.
      * </p>
      *
-     * @param str the String to get the substring from
+     * @param str   the String to get the substring from
      * @param start the position to start from, negative means count back from the end of the string by this many
-     * characters
-     * @param end the position to end at (exclusive), negative means count back from the end of the String by this many
-     * characters
+     *              characters
+     * @param end   the position to end at (exclusive), negative means count back from the end of the String by this many
+     *              characters
      * @return substring from start position to end positon
      */
     public static String substring(String str, int start, int end) {
@@ -461,7 +461,7 @@ public class StringUtils {
      * @param len the length of the required String
      * @return the leftmost characters
      * @throws IndexOutOfBoundsException if pos is out of bounds
-     * @throws IllegalArgumentException if len is less than zero
+     * @throws IllegalArgumentException  if len is less than zero
      */
     public static String mid(String str, int pos, int len) {
         if ((pos < 0) || ((str != null) && (pos > str.length()))) {
@@ -522,10 +522,10 @@ public class StringUtils {
      * tokens (as <code>StringTokenizer</code> does).
      * </p>
      *
-     * @param str The string to parse.
+     * @param str       The string to parse.
      * @param separator Characters used as the delimiters. If <code>null</code>, splits on whitespace.
-     * @param max The maximum number of elements to parse. The rest of the string to parse will be contained in the last
-     * array element. A zero or negative value implies no limit.
+     * @param max       The maximum number of elements to parse. The rest of the string to parse will be contained in the last
+     *                  array element. A zero or negative value implies no limit.
      * @return an array of parsed Strings
      */
     public static String[] split(String str, String separator, int max) {
@@ -594,7 +594,7 @@ public class StringUtils {
      * No delimiter is added before or after the list. A <code>null</code> separator is the same as a blank String.
      * </p>
      *
-     * @param array the array of values to join together
+     * @param array     the array of values to join together
      * @param separator the separator character to use
      * @return the joined String
      */
@@ -625,7 +625,7 @@ public class StringUtils {
      * No delimiter is added before or after the list. A <code>null</code> separator is the same as a blank String.
      * </p>
      *
-     * @param iterator the <code>Iterator</code> of values to join together
+     * @param iterator  the <code>Iterator</code> of values to join together
      * @param separator the separator character to use
      * @return the joined String
      */
@@ -698,7 +698,7 @@ public class StringUtils {
      * @param text text to search and replace in
      * @param repl char to search for
      * @param with char to replace with
-     * @param max maximum number of values to replace, or &lt;=0 if no maximum
+     * @param max  maximum number of values to replace, or &lt;=0 if no maximum
      * @return the text with any replacements processed
      */
     public static String replace(String text, char repl, char with, int max) {
@@ -756,7 +756,7 @@ public class StringUtils {
      * @param text text to search and replace in
      * @param repl String to search for
      * @param with String to replace with
-     * @param max maximum number of values to replace, or &lt;=0 if no maximum
+     * @param max  maximum number of values to replace, or &lt;=0 if no maximum
      * @return the text with any replacements processed
      */
     public static String replace(String text, String repl, String with, int max) {
@@ -783,10 +783,10 @@ public class StringUtils {
      * Overlay a part of a String with another String.
      * </p>
      *
-     * @param text String to do overlaying in
+     * @param text    String to do overlaying in
      * @param overlay String to overlay
-     * @param start int to start overlaying at
-     * @param end int to stop overlaying before
+     * @param start   int to start overlaying at
+     * @param end     int to stop overlaying before
      * @return String with overlayed text
      * @throws NullPointerException if text or overlay is <code>null</code>
      */
@@ -808,7 +808,7 @@ public class StringUtils {
      * Uses spaces as the value to buffer the String with. Equivalent to <code>center(str, size, " ")</code>.
      * </p>
      *
-     * @param str String to center
+     * @param str  String to center
      * @param size int size of new String
      * @return String containing centered String
      * @throws NullPointerException if str is <code>null</code>
@@ -826,12 +826,12 @@ public class StringUtils {
      * Uses a supplied String as the value to buffer the String with.
      * </p>
      *
-     * @param str String to center
-     * @param size int size of new String
+     * @param str   String to center
+     * @param size  int size of new String
      * @param delim String to buffer the new String with
      * @return String containing centered String
      * @throws NullPointerException if str or delim is <code>null</code>
-     * @throws ArithmeticException if delim is the empty String
+     * @throws ArithmeticException  if delim is the empty String
      */
     public static String center(String str, int size, String delim) {
         int sz = str.length();
@@ -1124,11 +1124,11 @@ public class StringUtils {
      * Repeat a String <code>n</code> times to form a new string.
      * </p>
      *
-     * @param str String to repeat
+     * @param str    String to repeat
      * @param repeat number of times to repeat str
      * @return String with repeated String
      * @throws NegativeArraySizeException if <code>repeat < 0</code>
-     * @throws NullPointerException if str is <code>null</code>
+     * @throws NullPointerException       if str is <code>null</code>
      */
     public static String repeat(String str, int repeat) {
         StringBuilder buffer = new StringBuilder(repeat * str.length());
@@ -1147,7 +1147,7 @@ public class StringUtils {
      * The String is padded to the size of <code>n</code>.
      * </p>
      *
-     * @param str String to repeat
+     * @param str  String to repeat
      * @param size number of times to repeat str
      * @return right padded String
      * @throws NullPointerException if str is <code>null</code>
@@ -1165,12 +1165,12 @@ public class StringUtils {
      * The String is padded to the size of <code>n</code>.
      * </p>
      *
-     * @param str String to pad out
-     * @param size size to pad to
+     * @param str   String to pad out
+     * @param size  size to pad to
      * @param delim String to pad with
      * @return right padded String
      * @throws NullPointerException if str or delim is <code>null</code>
-     * @throws ArithmeticException if delim is the empty String
+     * @throws ArithmeticException  if delim is the empty String
      */
     public static String rightPad(String str, int size, String delim) {
         size = (size - str.length()) / delim.length();
@@ -1189,7 +1189,7 @@ public class StringUtils {
      * The String is padded to the size of <code>n</code>.
      * </p>
      *
-     * @param str String to pad out
+     * @param str  String to pad out
      * @param size size to pad to
      * @return left padded String
      * @throws NullPointerException if str or delim is <code>null</code>
@@ -1201,12 +1201,12 @@ public class StringUtils {
     /**
      * Left pad a String with a specified string. Pad to a size of n.
      *
-     * @param str String to pad out
-     * @param size size to pad to
+     * @param str   String to pad out
+     * @param size  size to pad to
      * @param delim String to pad with
      * @return left padded String
      * @throws NullPointerException if str or delim is null
-     * @throws ArithmeticException if delim is the empty string
+     * @throws ArithmeticException  if delim is the empty string
      */
     public static String leftPad(String str, int size, String delim) {
         size = (size - str.length()) / delim.length();
@@ -1240,7 +1240,7 @@ public class StringUtils {
      * If whitespace is wanted to be removed, used the {@link #strip(java.lang.String)} method.
      * </p>
      *
-     * @param str the String to remove a string from
+     * @param str   the String to remove a string from
      * @param delim the String to remove at start and end
      * @return the stripped String
      */
@@ -1266,7 +1266,7 @@ public class StringUtils {
      * Strip the specified delimiter from the front and back of every String in the array.
      * </p>
      *
-     * @param strs the Strings to remove a String from
+     * @param strs      the Strings to remove a String from
      * @param delimiter the String to remove at start and end
      * @return the stripped Strings
      */
@@ -1291,7 +1291,7 @@ public class StringUtils {
      * If the strip String is <code>null</code>, whitespace is stripped.
      * </p>
      *
-     * @param str the String to remove characters from
+     * @param str   the String to remove characters from
      * @param strip the String to remove
      * @return the stripped String
      */
@@ -1322,7 +1322,7 @@ public class StringUtils {
      * If the strip String is <code>null</code>, whitespace is stripped.
      * </p>
      *
-     * @param str the String to remove characters from
+     * @param str   the String to remove characters from
      * @param strip the String to remove
      * @return the stripped String
      */
@@ -1576,8 +1576,8 @@ public class StringUtils {
      * Get the String that is nested in between two Strings.
      * </p>
      *
-     * @param str the String containing nested-string
-     * @param open the String before nested-string
+     * @param str   the String containing nested-string
+     * @param open  the String before nested-string
      * @param close the String after nested-string
      * @return the String that was nested, or <code>null</code>
      * @throws NullPointerException if open or close is <code>null</code>
@@ -1826,7 +1826,7 @@ public class StringUtils {
      * , a passed in default String.
      * </p>
      *
-     * @param obj the Object to check
+     * @param obj           the Object to check
      * @param defaultString the default String to return if str is <code>null</code>
      * @return the passed in string, or the default if it was <code>null</code>
      */
@@ -1866,7 +1866,7 @@ public class StringUtils {
      * delimiter is <code>'.'</code>).
      * </p>
      *
-     * @param str the String to reverse
+     * @param str       the String to reverse
      * @param delimiter the delimiter to use
      * @return the reversed String
      */
@@ -1908,9 +1908,9 @@ public class StringUtils {
 
     /**
      * Turn "Now is the time for all good men" into "Now is the time for..."
-     * <p/>
+     * <p>
      * Specifically:
-     * <p/>
+     * <p>
      * If str is less than max characters long, return it. Else abbreviate it to (substring(str, 0, max-3) + "..."). If
      * maxWidth is less than 3, throw an IllegalArgumentException. In no case will it return a string of length greater
      * than maxWidth.
@@ -1923,12 +1923,12 @@ public class StringUtils {
 
     /**
      * Turn "Now is the time for all good men" into "...is the time for..."
-     * <p/>
+     * <p>
      * Works like abbreviate(String, int), but allows you to specify a "left edge" offset. Note that this left edge is
      * not necessarily going to be the leftmost character in the result, or the first character following the ellipses,
      * but it will appear somewhere in the result. In no case will it return a string of length greater than maxWidth.
      *
-     * @param offset left edge of source string
+     * @param offset   left edge of source string
      * @param maxWidth maximum length of result string
      */
     public static String abbreviate(String s, int offset, int maxWidth) {
@@ -1962,7 +1962,7 @@ public class StringUtils {
     /**
      * Compare two strings, and return the portion where they differ. (More precisely, return the remainder of the
      * second string, starting from where it's different from the first.)
-     * <p/>
+     * <p>
      * E.g. strdiff("i am a machine", "i am a robot") -> "robot"
      *
      * @return the portion of s2 where it differs from s1; returns the empty string ("") if they are equal
@@ -2031,11 +2031,11 @@ public class StringUtils {
     /**
      * This is basically the inverse of {@link #addAndDeHump(String)}. It will remove the 'replaceThis' parameter and
      * uppercase the next character afterwards.
-     *
+     * <p>
      * <pre>
      * removeAndHump( &quot;this-is-it&quot;, %quot;-&quot; );
      * </pre>
-     *
+     * <p>
      * will become 'ThisIsIt'.
      *
      * @param data
@@ -2098,7 +2098,7 @@ public class StringUtils {
 
     /**
      * Take the input string and un-camel-case it.
-     * <p/>
+     * <p>
      * 'ThisIsIt' will become 'this-is-it'.
      *
      * @param input
@@ -2122,8 +2122,8 @@ public class StringUtils {
      * <p>
      * Quote and escape a String with the given character, handling <code>null</code>.
      * </p>
-     * <p/>
-     *
+     * <p>
+     * <p>
      * <pre>
      * StringUtils.quoteAndEscape(null, *)    = null
      * StringUtils.quoteAndEscape("", *)      = ""
@@ -2139,7 +2139,7 @@ public class StringUtils {
      * @since 1.5.1
      */
     public static String quoteAndEscape(String source, char quoteChar) {
-        return quoteAndEscape(source, quoteChar, new char[] { quoteChar }, new char[] { ' ' },
+        return quoteAndEscape(source, quoteChar, new char[]{quoteChar}, new char[]{' '},
                 '\\', false);
     }
 
@@ -2156,7 +2156,7 @@ public class StringUtils {
      * @since 1.5.1
      */
     public static String quoteAndEscape(String source, char quoteChar, char[] quotingTriggers) {
-        return quoteAndEscape(source, quoteChar, new char[] { quoteChar }, quotingTriggers, '\\',
+        return quoteAndEscape(source, quoteChar, new char[]{quoteChar}, quotingTriggers, '\\',
                 false);
     }
 
@@ -2172,7 +2172,7 @@ public class StringUtils {
      */
     public static String quoteAndEscape(String source, char quoteChar, final char[] escapedChars,
                                         char escapeChar, boolean force) {
-        return quoteAndEscape(source, quoteChar, escapedChars, new char[] { ' ' }, escapeChar,
+        return quoteAndEscape(source, quoteChar, escapedChars, new char[]{' '}, escapeChar,
                 force);
     }
 
@@ -2292,7 +2292,7 @@ public class StringUtils {
     /**
      * Parses the given String and replaces all occurrences of '\n', '\r' and '\r\n' with the given line separator.
      *
-     * @param s a not null String
+     * @param s  a not null String
      * @param ls the wanted line separator ("\n" on UNIX), if <code>null</code> using the System line separator.
      * @return a String that contains only System line separators.
      * @throws IllegalArgumentException if ls is not '\n', '\r' and '\r\n' characters.
@@ -2340,8 +2340,8 @@ public class StringUtils {
      * <p>
      * A <code>null</code> or empty ("") String will return <code>false</code>.
      * </p>
-     * <p/>
-     *
+     * <p>
+     * <p>
      * <pre>
      * StringUtils.contains(null, *)    = false
      * StringUtils.contains("", *)      = false
@@ -2349,7 +2349,7 @@ public class StringUtils {
      * StringUtils.contains("abc", 'z') = false
      * </pre>
      *
-     * @param str the String to check, may be null
+     * @param str        the String to check, may be null
      * @param searchChar the character to find
      * @return true if the String contains the search character, false if not or <code>null</code> string input
      * @since 1.5.7
@@ -2370,8 +2370,8 @@ public class StringUtils {
      * <p>
      * A <code>null</code> String will return <code>false</code>.
      * </p>
-     * <p/>
-     *
+     * <p>
+     * <p>
      * <pre>
      * StringUtils.contains(null, *)     = false
      * StringUtils.contains(*, null)     = false
@@ -2381,7 +2381,7 @@ public class StringUtils {
      * StringUtils.contains("abc", "z")  = false
      * </pre>
      *
-     * @param str the String to check, may be null
+     * @param str       the String to check, may be null
      * @param searchStr the String to find, may be null
      * @return true if the String contains the search String, false if not or <code>null</code> string input
      * @since 1.5.7

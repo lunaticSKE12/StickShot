@@ -3,20 +3,13 @@ package com.stickercamera.app.camera.effect;
 
 import com.stickercamera.app.camera.util.GPUImageFilterTools;
 
-/**
- * @author tongqian.ni
- *
- */
-public class FilterEffect  {
 
-    private String     title;
+public class FilterEffect {
+
+    private String title;
     private GPUImageFilterTools.FilterType type;
-    private int        degree;
+    private int degree;
 
-    /**
-     * @param title
-     * @param uri
-     */
     public FilterEffect(String title, GPUImageFilterTools.FilterType type, int degree) {
         this.type = type;
         this.degree = degree;

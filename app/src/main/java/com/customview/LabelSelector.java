@@ -13,17 +13,22 @@ import com.github.skykai.stickercamera.R;
 
 /**
  * @author tongqian.ni
- *
  */
 public class LabelSelector extends LinearLayout {
 
-//    private ImageView txtLabelBtn;
+    //    private ImageView txtLabelBtn;
 //    private ImageView addrLabelBtn;
     private TextView addText;
+    private float mLastTouchX = -1;
+    private float mLastTouchY = -1;
 
     public LabelSelector(Context context) {
-        this(context,null);
+        this(context, null);
     }
+
+//    public void setAddrClicked(OnClickListener listener) {
+//        addrLabelBtn.setOnClickListener(listener);
+//    }
 
     public LabelSelector(Context context, AttributeSet attr) {
         super(context, attr);
@@ -37,10 +42,6 @@ public class LabelSelector extends LinearLayout {
         addText.setOnClickListener(listener);
     }
 
-//    public void setAddrClicked(OnClickListener listener) {
-//        addrLabelBtn.setOnClickListener(listener);
-//    }
-
     public float getmLastTouchX() {
         return mLastTouchX;
     }
@@ -48,9 +49,6 @@ public class LabelSelector extends LinearLayout {
     public float getmLastTouchY() {
         return mLastTouchY;
     }
-
-    private float mLastTouchX = -1;
-    private float mLastTouchY = -1;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -13,9 +13,8 @@ import java.io.InputStreamReader;
 public class IOUtil {
     /**
      * 把流读成字符串
-     * 
-     * @param is
-     *            输入流
+     *
+     * @param is 输入流
      * @return 字符串
      */
     public static String convertStreamToString(InputStream is) {
@@ -40,9 +39,8 @@ public class IOUtil {
 
     /**
      * 关闭流
-     * 
-     * @param stream
-     *            可关闭的流
+     *
+     * @param stream 可关闭的流
      */
     public static void closeStream(Closeable stream) {
         try {

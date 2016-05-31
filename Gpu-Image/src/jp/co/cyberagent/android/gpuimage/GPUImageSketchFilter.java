@@ -16,9 +16,6 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Converts video to look like a sketch.
  * This is just the Sobel edge detection filter with the colors inverted.

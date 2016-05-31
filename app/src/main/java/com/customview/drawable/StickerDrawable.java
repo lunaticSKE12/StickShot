@@ -10,13 +10,13 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 
 public class StickerDrawable extends BitmapDrawable implements FeatherDrawable {
-    private float  minWidth    = 0.0F;
-    private float  minHeight   = 0.0F;
     BlurMaskFilter mBlurFilter;
-    Paint          mShadowPaint;
-    Bitmap         mShadowBitmap;
-    boolean        mDrawShadow = true;
-    Rect           mTempRect   = new Rect();
+    Paint mShadowPaint;
+    Bitmap mShadowBitmap;
+    boolean mDrawShadow = true;
+    Rect mTempRect = new Rect();
+    private float minWidth = 0.0F;
+    private float minHeight = 0.0F;
 
     public StickerDrawable(Resources resources, Bitmap bitmap) {
         super(resources, bitmap);

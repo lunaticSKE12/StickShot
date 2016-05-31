@@ -21,17 +21,17 @@ public interface FeatherDrawable {
 
     public void setBounds(int paramInt1, int paramInt2, int paramInt3, int paramInt4);
 
-    public void setBounds(Rect paramRect);
-
     public void copyBounds(Rect paramRect);
 
     public Rect copyBounds();
 
     public Rect getBounds();
 
-    public void setChangingConfigurations(int paramInt);
+    public void setBounds(Rect paramRect);
 
     public int getChangingConfigurations();
+
+    public void setChangingConfigurations(int paramInt);
 
     public void setDither(boolean paramBoolean);
 

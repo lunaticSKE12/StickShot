@@ -22,6 +22,9 @@ import android.graphics.PointF;
 
 import com.github.skykai.stickercamera.R;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import jp.co.cyberagent.android.gpuimage.GPUImage3x3ConvolutionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImage3x3TextureSamplingFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageAddBlendFilter;
@@ -95,9 +98,6 @@ import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWeakPixelInclusionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class GPUImageFilterTools {
 
     public static GPUImageFilter createFilterForType(final Context context, final FilterType type) {
@@ -107,59 +107,59 @@ public class GPUImageFilterTools {
                 return new GPUImageFilter();
             case ACV_AIMEI:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.aimei));
+                        R.raw.aimei));
                 return curveFilter;
             case ACV_DANLAN:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.danlan));
+                        R.raw.danlan));
                 return curveFilter;
             case ACV_DANHUANG:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.danhuang));
+                        R.raw.danhuang));
                 return curveFilter;
-            case  ACV_FUGU:
+            case ACV_FUGU:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.fugu));
+                        R.raw.fugu));
                 return curveFilter;
             case ACV_GAOLENG:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.gaoleng));
+                        R.raw.gaoleng));
                 return curveFilter;
             case ACV_HUAIJIU:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.huaijiu));
+                        R.raw.huaijiu));
                 return curveFilter;
             case ACV_JIAOPIAN:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.jiaopian));
+                        R.raw.jiaopian));
                 return curveFilter;
             case ACV_KEAI:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.keai));
+                        R.raw.keai));
                 return curveFilter;
             case ACV_LOMO:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.lomo));
+                        R.raw.lomo));
                 return curveFilter;
             case ACV_MORENJIAQIANG:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.morenjiaqiang));
+                        R.raw.morenjiaqiang));
                 return curveFilter;
             case ACV_NUANXIN:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.nuanxin));
+                        R.raw.nuanxin));
                 return curveFilter;
             case ACV_QINGXIN:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.qingxin));
+                        R.raw.qingxin));
                 return curveFilter;
             case ACV_RIXI:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.rixi));
+                        R.raw.rixi));
                 return curveFilter;
             case ACV_WENNUAN:
                 curveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.wennuan));
+                        R.raw.wennuan));
                 return curveFilter;
             case CONTRAST:
                 return new GPUImageContrastFilter(2.0f);
@@ -185,8 +185,8 @@ public class GPUImageFilterTools {
                 return new GPUImageSobelEdgeDetection();
             case THREE_X_THREE_CONVOLUTION:
                 GPUImage3x3ConvolutionFilter convolution = new GPUImage3x3ConvolutionFilter();
-                convolution.setConvolutionKernel(new float[] { -1.0f, 0.0f, 1.0f, -2.0f, 0.0f,
-                        2.0f, -1.0f, 0.0f, 1.0f });
+                convolution.setConvolutionKernel(new float[]{-1.0f, 0.0f, 1.0f, -2.0f, 0.0f,
+                        2.0f, -1.0f, 0.0f, 1.0f});
                 return convolution;
             case EMBOSS:
                 return new GPUImageEmbossFilter();
@@ -205,7 +205,7 @@ public class GPUImageFilterTools {
             case HIGHLIGHT_SHADOW:
                 return new GPUImageHighlightShadowFilter(0.0f, 1.0f);
             case MONOCHROME:
-                return new GPUImageMonochromeFilter(1.0f, new float[] { 0.6f, 0.45f, 0.3f, 1.0f });
+                return new GPUImageMonochromeFilter(1.0f, new float[]{0.6f, 0.45f, 0.3f, 1.0f});
             case OPACITY:
                 return new GPUImageOpacityFilter(1.0f);
             case RGB:
@@ -216,12 +216,12 @@ public class GPUImageFilterTools {
                 PointF centerPoint = new PointF();
                 centerPoint.x = 0.5f;
                 centerPoint.y = 0.5f;
-                return new GPUImageVignetteFilter(centerPoint, new float[] { 0.0f, 0.0f, 0.0f },
-                    0.3f, 0.75f);
+                return new GPUImageVignetteFilter(centerPoint, new float[]{0.0f, 0.0f, 0.0f},
+                        0.3f, 0.75f);
             case TONE_CURVE:
                 GPUImageToneCurveFilter toneCurveFilter = new GPUImageToneCurveFilter();
                 toneCurveFilter.setFromCurveFileInputStream(context.getResources().openRawResource(
-                    R.raw.tone_cuver_sample));
+                        R.raw.tone_cuver_sample));
                 return toneCurveFilter;
             case BLEND_DIFFERENCE:
                 return createBlendFilter(context, GPUImageDifferenceBlendFilter.class);
@@ -276,7 +276,7 @@ public class GPUImageFilterTools {
             case LOOKUP_AMATORKA:
                 GPUImageLookupFilter amatorka = new GPUImageLookupFilter();
                 amatorka.setBitmap(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.lookup_amatorka));
+                        R.drawable.lookup_amatorka));
                 return amatorka;
             case GAUSSIAN_BLUR:
                 return new GPUImageGaussianBlurFilter();
@@ -332,7 +332,7 @@ public class GPUImageFilterTools {
         try {
             GPUImageTwoInputFilter filter = filterClass.newInstance();
             filter.setBitmap(BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.ic_launcher));
+                    R.drawable.ic_launcher));
             return filter;
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,16 +340,16 @@ public class GPUImageFilterTools {
         }
     }
 
-    public interface OnGpuImageFilterChosenListener {
-        void onGpuImageFilterChosenListener(GPUImageFilter filter);
-    }
-
     public enum FilterType {
         NORMAL, ACV_AIMEI, ACV_DANLAN, ACV_DANHUANG, ACV_FUGU, ACV_GAOLENG, ACV_HUAIJIU, ACV_JIAOPIAN, ACV_KEAI, ACV_LOMO, ACV_MORENJIAQIANG, ACV_NUANXIN, ACV_QINGXIN, ACV_RIXI, ACV_WENNUAN, CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION, SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE, BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA, BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA, GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION, SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE
     }
 
+    public interface OnGpuImageFilterChosenListener {
+        void onGpuImageFilterChosenListener(GPUImageFilter filter);
+    }
+
     private static class FilterList {
-        public List<String>     names   = new LinkedList<String>();
+        public List<String> names = new LinkedList<String>();
         public List<FilterType> filters = new LinkedList<FilterType>();
 
         public void addFilter(final String name, final FilterType filter) {
@@ -660,8 +660,8 @@ public class GPUImageFilterTools {
             @Override
             public void adjust(int percentage) {
                 getFilter().setMidtones(
-                    new float[] { range(percentage, 0.0f, 1.0f), range(percentage / 2, 0.0f, 1.0f),
-                            range(percentage / 3, 0.0f, 1.0f) });
+                        new float[]{range(percentage, 0.0f, 1.0f), range(percentage / 2, 0.0f, 1.0f),
+                                range(percentage / 3, 0.0f, 1.0f)});
             }
         }
     }

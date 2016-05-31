@@ -3,14 +3,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center_vertical"
-    android:padding="1dp" >
+    android:padding="1dp">
 
     <LinearLayout
         android:id="@+id/small_filter_container"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:gravity="center"
-        android:background="@drawable/bottom_tool" >
+        android:background="@drawable/bottom_tool"
+        android:gravity="center">
 
         <jp.co.cyberagent.android.gpuimage.GPUImageView
             android:id="@+id/small_filter"

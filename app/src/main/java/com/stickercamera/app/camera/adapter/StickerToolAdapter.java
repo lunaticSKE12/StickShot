@@ -7,23 +7,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-
 import com.common.util.ImageLoaderUtils;
 import com.github.skykai.stickercamera.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stickercamera.app.model.Addon;
 
 import java.util.List;
 
-/**
- * 
- * 贴纸适配器
- * @author tongqian.ni
- */
+
 public class StickerToolAdapter extends BaseAdapter {
 
     List<Addon> filterUris;
-    Context     mContext;
+    Context mContext;
 
     public StickerToolAdapter(Context context, List<Addon> effects) {
         filterUris = effects;

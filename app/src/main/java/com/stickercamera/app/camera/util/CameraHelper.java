@@ -36,20 +36,6 @@ public class CameraHelper {
         }
     }
 
-    public interface CameraHelperImpl {
-        int getNumberOfCameras();
-
-        Camera openCamera(int id);
-
-        Camera openDefaultCamera();
-
-        Camera openCameraFacing(int facing);
-
-        boolean hasCamera(int cameraFacingFront);
-
-        void getCameraInfo(int cameraId, CameraInfo2 cameraInfo);
-    }
-
     public int getNumberOfCameras() {
         return mImpl.getNumberOfCameras();
     }
@@ -115,6 +101,20 @@ public class CameraHelper {
             result = (info.orientation - degrees + 360) % 360;
         }
         return result;
+    }
+
+    public interface CameraHelperImpl {
+        int getNumberOfCameras();
+
+        Camera openCamera(int id);
+
+        Camera openDefaultCamera();
+
+        Camera openCameraFacing(int facing);
+
+        boolean hasCamera(int cameraFacingFront);
+
+        void getCameraInfo(int cameraId, CameraInfo2 cameraInfo);
     }
 
     public static class CameraInfo2 {

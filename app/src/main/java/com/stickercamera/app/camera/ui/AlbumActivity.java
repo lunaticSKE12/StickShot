@@ -24,21 +24,14 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * 相册界面
- * Created by sky on 2015/7/8.
- * Weibo: http://weibo.com/2030683111
- * Email: 1132234509@qq.com
- */
 public class AlbumActivity extends CameraBaseActivity {
-
-    private Map<String, Album> albums;
-    private List<String> paths = new ArrayList<String>();
 
     @InjectView(R.id.indicator)
     PagerSlidingTabStrip tab;
     @InjectView(R.id.pager)
     ViewPager pager;
+    private Map<String, Album> albums;
+    private List<String> paths = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +39,6 @@ public class AlbumActivity extends CameraBaseActivity {
         setContentView(R.layout.activity_album);
         ButterKnife.inject(this);
         albums = ImageUtils.findGalleries(this, paths, 0);
-        //ViewPager的adapter
         FragmentPagerAdapter adapter = new TabPageIndicatorAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);
         tab.setViewPager(pager);
@@ -74,7 +66,6 @@ public class AlbumActivity extends CameraBaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            //新建一个Fragment来展示ViewPager item的内容，并传递参数
             return AlbumFragment.newInstance(albums.get(paths.get(position)).getPhotos());
         }
 

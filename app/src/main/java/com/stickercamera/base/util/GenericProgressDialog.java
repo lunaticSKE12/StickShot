@@ -11,11 +11,11 @@ import com.github.skykai.stickercamera.R;
 
 
 public class GenericProgressDialog extends AlertDialog {
-    private ProgressBar  mProgress;
-    private TextView     mMessageView;
+    private ProgressBar mProgress;
+    private TextView mMessageView;
     private CharSequence mMessage;
-    private boolean      mIndeterminate;
-    private boolean      mProgressVisiable;
+    private boolean mIndeterminate;
+    private boolean mProgressVisiable;
 
     public GenericProgressDialog(Context context) {
         super(context/*,R.style.Float*/);
@@ -53,6 +53,7 @@ public class GenericProgressDialog extends AlertDialog {
 
     /**
      * 圈圈可见性设置
+     *
      * @param progressVisiable 是否显示圈圈
      */
     public void setProgressVisiable(boolean progressVisiable) {

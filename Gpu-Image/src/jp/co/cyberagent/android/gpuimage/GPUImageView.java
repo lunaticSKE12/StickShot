@@ -23,7 +23,11 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewTreeObserver;
@@ -38,10 +42,10 @@ import java.util.concurrent.Semaphore;
 
 public class GPUImageView extends FrameLayout {
 
+    public Size mForceSize = null;
     private GLSurfaceView mGLSurfaceView;
     private GPUImage mGPUImage;
     private GPUImageFilter mFilter;
-    public Size mForceSize = null;
     private float mRatio = 0.0f;
 
     public GPUImageView(Context context) {
@@ -121,6 +125,15 @@ public class GPUImageView extends FrameLayout {
     }
 
     /**
+     * Get the current applied filter.
+     *
+     * @return the current filter
+     */
+    public GPUImageFilter getFilter() {
+        return mFilter;
+    }
+
+    /**
      * Set the filter to be applied on the image.
      *
      * @param filter Filter that should be applied on the image.
@@ -129,15 +142,6 @@ public class GPUImageView extends FrameLayout {
         mFilter = filter;
         mGPUImage.setFilter(filter);
         requestRender();
-    }
-
-    /**
-     * Get the current applied filter.
-     *
-     * @return the current filter
-     */
-    public GPUImageFilter getFilter() {
-        return mFilter;
     }
 
     /**
@@ -179,8 +183,8 @@ public class GPUImageView extends FrameLayout {
      * listener.
      *
      * @param folderName the folder name
-     * @param fileName the file name
-     * @param listener the listener
+     * @param fileName   the file name
+     * @param listener   the listener
      */
     public void saveToPictures(final String folderName, final String fileName,
                                final OnPictureSavedListener listener) {
@@ -281,6 +285,7 @@ public class GPUImageView extends FrameLayout {
 
     /**
      * Capture the current image with the size as it is displayed and retrieve it as Bitmap.
+     *
      * @return current output as Bitmap
      * @throws InterruptedException
      */
@@ -328,6 +333,10 @@ public class GPUImageView extends FrameLayout {
      */
     public void onResume() {
         mGLSurfaceView.onResume();
+    }
+
+    public interface OnPictureSavedListener {
+        void onPictureSaved(Uri uri);
     }
 
     public static class Size {
@@ -448,9 +457,5 @@ public class GPUImageView extends FrameLayout {
                 e.printStackTrace();
             }
         }
-    }
-
-    public interface OnPictureSavedListener {
-        void onPictureSaved(Uri uri);
     }
 }

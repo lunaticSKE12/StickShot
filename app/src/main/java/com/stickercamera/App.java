@@ -18,10 +18,10 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
  */
 public class App extends Application {
 
-    protected static App       mInstance;
-    private DisplayMetrics     displayMetrics = null;
+    protected static App mInstance;
+    private DisplayMetrics displayMetrics = null;
 
-    public App(){
+    public App() {
         mInstance = this;
     }
 
@@ -89,9 +89,8 @@ public class App extends Application {
         this.displayMetrics = DisplayMetrics;
     }
 
-    public int dp2px(float f)
-    {
-        return (int)(0.5F + f * getScreenDensity());
+    public int dp2px(float f) {
+        return (int) (0.5F + f * getScreenDensity());
     }
 
     public int px2dp(float pxValue) {
@@ -105,7 +104,6 @@ public class App extends Application {
     public String getCacheDirPath() {
         return getCacheDir().getAbsolutePath();
     }
-
 
 
 }

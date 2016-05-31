@@ -8,6 +8,19 @@
 
 package jp.co.cyberagent.android.gpuimage;
 
+import android.graphics.Bitmap;
+import android.opengl.GLSurfaceView;
+import android.util.Log;
+
+import java.nio.IntBuffer;
+
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
+import javax.microedition.khronos.opengles.GL10;
+
 import static javax.microedition.khronos.egl.EGL10.EGL_ALPHA_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_BLUE_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
@@ -21,19 +34,6 @@ import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
 import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
-
-import java.nio.IntBuffer;
-
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
-import javax.microedition.khronos.opengles.GL10;
-
-import android.graphics.Bitmap;
-import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 public class PixelBuffer {
     final static String TAG = "PixelBuffer";
@@ -58,7 +58,7 @@ public class PixelBuffer {
         mHeight = height;
 
         int[] version = new int[2];
-        int[] attribList = new int[] {
+        int[] attribList = new int[]{
                 EGL_WIDTH, mWidth,
                 EGL_HEIGHT, mHeight,
                 EGL_NONE
@@ -69,7 +69,7 @@ public class PixelBuffer {
         mEGLDisplay = mEGL.eglGetDisplay(EGL_DEFAULT_DISPLAY);
         mEGL.eglInitialize(mEGLDisplay, version);
         mEGLConfig = chooseConfig(); // Choosing a config is a little more
-                                     // complicated
+        // complicated
 
         // mEGLContext = mEGL.eglCreateContext(mEGLDisplay, mEGLConfig,
         // EGL_NO_CONTEXT, null);
@@ -136,7 +136,7 @@ public class PixelBuffer {
     }
 
     private EGLConfig chooseConfig() {
-        int[] attribList = new int[] {
+        int[] attribList = new int[]{
                 EGL_DEPTH_SIZE, 0,
                 EGL_STENCIL_SIZE, 0,
                 EGL_RED_SIZE, 8,
@@ -201,7 +201,7 @@ public class PixelBuffer {
                 iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
             }
         }
-        
+
 
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
         mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));

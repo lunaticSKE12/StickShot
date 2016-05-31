@@ -26,10 +26,6 @@ import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -37,6 +33,11 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
@@ -49,25 +50,20 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             -1.0f, 1.0f,
             1.0f, 1.0f,
     };
-
-    private GPUImageFilter mFilter;
-
     public final Object mSurfaceChangedWaiter = new Object();
-
-    private int mGLTextureId = NO_IMAGE;
-    private SurfaceTexture mSurfaceTexture = null;
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
+    private final Queue<Runnable> mRunOnDraw;
+    private final Queue<Runnable> mRunOnDrawEnd;
+    private GPUImageFilter mFilter;
+    private int mGLTextureId = NO_IMAGE;
+    private SurfaceTexture mSurfaceTexture = null;
     private IntBuffer mGLRgbBuffer;
-
     private int mOutputWidth;
     private int mOutputHeight;
     private int mImageWidth;
     private int mImageHeight;
     private int mAddedPadding;
-
-    private final Queue<Runnable> mRunOnDraw;
-    private final Queue<Runnable> mRunOnDrawEnd;
     private Rotation mRotation;
     private boolean mFlipHorizontal;
     private boolean mFlipVertical;
@@ -298,13 +294,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     }
 
     public void setRotationCamera(final Rotation rotation, final boolean flipHorizontal,
-            final boolean flipVertical) {
+                                  final boolean flipVertical) {
         setRotation(rotation, flipVertical, flipHorizontal);
-    }
-
-    public void setRotation(final Rotation rotation) {
-        mRotation = rotation;
-        adjustImageScaling();
     }
 
     public void setRotation(final Rotation rotation,
@@ -316,6 +307,11 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     public Rotation getRotation() {
         return mRotation;
+    }
+
+    public void setRotation(final Rotation rotation) {
+        mRotation = rotation;
+        adjustImageScaling();
     }
 
     public boolean isFlippedHorizontally() {

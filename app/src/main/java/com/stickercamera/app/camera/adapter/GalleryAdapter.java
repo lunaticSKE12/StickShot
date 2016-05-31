@@ -11,25 +11,18 @@ import android.widget.ImageView;
 import com.common.util.DistanceUtil;
 import com.common.util.ImageLoaderUtils;
 import com.github.skykai.stickercamera.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.stickercamera.app.model.PhotoItem;
 
 import java.util.List;
 
-/**
- * @author tongqian.ni
- *
- */
+
 public class GalleryAdapter extends BaseAdapter {
 
-    private Context             mContext;
-    private List<PhotoItem>     values;
     public static GalleryHolder holder;
+    private Context mContext;
+    private List<PhotoItem> values;
 
-    /**
-     * @param albumActivity
-     * @param values
-     */
+
     public GalleryAdapter(Context context, List<PhotoItem> values) {
         this.mContext = context;
         this.values = values;
@@ -66,8 +59,8 @@ public class GalleryAdapter extends BaseAdapter {
         }
         final PhotoItem gallery = (PhotoItem) getItem(position);
 
-        ImageLoaderUtils.displayLocalImage(gallery.getImageUri(), holder.sample,null);
-        
+        ImageLoaderUtils.displayLocalImage(gallery.getImageUri(), holder.sample, null);
+
         return convertView;
     }
 

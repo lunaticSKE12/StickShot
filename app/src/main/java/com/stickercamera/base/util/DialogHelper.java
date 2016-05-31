@@ -14,9 +14,9 @@ import com.github.skykai.stickercamera.R;
 
 
 public class DialogHelper {
-    private Activity    mActivity;
+    private Activity mActivity;
     private AlertDialog mAlertDialog;
-    private Toast       mToast;
+    private Toast mToast;
 
     public DialogHelper(Activity activity) {
         mActivity = activity;
@@ -24,19 +24,13 @@ public class DialogHelper {
 
     /**
      * 弹对话框
-     * 
-     * @param title
-     *            标题
-     * @param msg
-     *            消息
-     * @param positive
-     *            确定
-     * @param positiveListener
-     *            确定回调
-     * @param negative
-     *            否定
-     * @param negativeListener
-     *            否定回调
+     *
+     * @param title            标题
+     * @param msg              消息
+     * @param positive         确定
+     * @param positiveListener 确定回调
+     * @param negative         否定
+     * @param negativeListener 否定回调
      */
     public void alert(final String title, final String msg, final String positive,
                       final DialogInterface.OnClickListener positiveListener,
@@ -46,21 +40,14 @@ public class DialogHelper {
 
     /**
      * 弹对话框
-     * 
-     * @param title
-     *            标题
-     * @param msg
-     *            消息
-     * @param positive
-     *            确定
-     * @param positiveListener
-     *            确定回调
-     * @param negative
-     *            否定
-     * @param negativeListener
-     *            否定回调
-     * @param isCanceledOnTouchOutside
-     *            是否可以点击外围框
+     *
+     * @param title                    标题
+     * @param msg                      消息
+     * @param positive                 确定
+     * @param positiveListener         确定回调
+     * @param negative                 否定
+     * @param negativeListener         否定回调
+     * @param isCanceledOnTouchOutside 是否可以点击外围框
      */
     public void alert(final String title, final String msg, final String positive,
                       final DialogInterface.OnClickListener positiveListener,
@@ -98,11 +85,9 @@ public class DialogHelper {
 
     /**
      * TOAST
-     * 
-     * @param msg
-     *            消息
-     * @param period
-     *            时长
+     *
+     * @param msg    消息
+     * @param period 时长
      */
     public void toast(final String msg, final int period) {
         mActivity.runOnUiThread(new Runnable() {
@@ -111,7 +96,7 @@ public class DialogHelper {
             public void run() {
                 mToast = new Toast(mActivity);
                 View view = LayoutInflater.from(mActivity).inflate(
-                    R.layout.view_transient_notification, null);
+                        R.layout.view_transient_notification, null);
                 TextView tv = (TextView) view.findViewById(android.R.id.message);
                 tv.setText(msg);
                 mToast.setView(view);
@@ -125,11 +110,9 @@ public class DialogHelper {
 
     /**
      * 显示对话框
-     * 
-     * @param showProgressBar
-     *            是否显示圈圈
-     * @param msg
-     *            对话框信息
+     *
+     * @param showProgressBar 是否显示圈圈
+     * @param msg             对话框信息
      */
     public void showProgressDialog(boolean showProgressBar, String msg) {
         showProgressDialog(msg, true, null, showProgressBar);
@@ -137,9 +120,8 @@ public class DialogHelper {
 
     /**
      * 显示进度对话框
-     * 
-     * @param msg
-     *            消息
+     *
+     * @param msg 消息
      */
     public void showProgressDialog(final String msg) {
         showProgressDialog(msg, true, null, true);
@@ -147,9 +129,8 @@ public class DialogHelper {
 
     /**
      * 显示可取消的进度对话框
-     * 
-     * @param msg
-     *            消息
+     *
+     * @param msg 消息
      */
     public void showProgressDialog(final String msg, final boolean cancelable,
                                    final OnCancelListener cancelListener,

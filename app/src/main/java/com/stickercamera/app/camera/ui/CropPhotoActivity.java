@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.common.util.FileUtils;
 import com.common.util.IOUtil;
@@ -35,20 +34,10 @@ import java.io.InputStream;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * 裁剪图片界面
- * Created by sky on 2015/7/8.
- * Weibo: http://weibo.com/2030683111
- * Email: 1132234509@qq.com
- */
 public class CropPhotoActivity extends CameraBaseActivity {
 
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
-    private Uri fileUri;
-    private Bitmap oriBitmap;
-    private int initWidth, initHeight;
-    private static final int MAX_WRAP_SIZE  = 2048;
-
+    private static final int MAX_WRAP_SIZE = 2048;
     @InjectView(R.id.crop_image)
     ImageViewTouch cropImage;
     @InjectView(R.id.draw_area)
@@ -59,11 +48,13 @@ public class CropPhotoActivity extends CameraBaseActivity {
     View btnCropType;
     @InjectView(R.id.image_center)
     ImageView imageCenter;
+    private Uri fileUri;
+    private Bitmap oriBitmap;
+    private int initWidth, initHeight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 显示界面
         setContentView(R.layout.activity_new_crop);
         ButterKnife.inject(this);
         fileUri = getIntent().getData();
@@ -86,7 +77,6 @@ public class CropPhotoActivity extends CameraBaseActivity {
         imageCenter.setOnClickListener(v -> wrapImage.setSelected(!wrapImage.isSelected()));
         findViewById(R.id.cancel).setOnClickListener(v -> finish());
         findViewById(R.id.picked).setOnClickListener(v -> {
-            showProgressDialog("图片处理中...");
             new Thread() {
                 public void run() {
                     if (btnCropType.isSelected()) {
@@ -95,7 +85,9 @@ public class CropPhotoActivity extends CameraBaseActivity {
                         cropImage();
                     }
                     dismissProgressDialog();
-                };
+                }
+
+                ;
             }.start();
         });
     }
@@ -105,7 +97,7 @@ public class CropPhotoActivity extends CameraBaseActivity {
         int width = initWidth > initHeight ? initWidth : initHeight;
         int imageSize = width < MAX_WRAP_SIZE ? width : MAX_WRAP_SIZE;
 
-        int move =  (int)((initHeight - initWidth) / 2 / (float)width * (float)imageSize);
+        int move = (int) ((initHeight - initWidth) / 2 / (float) width * (float) imageSize);
         int moveX = initWidth < initHeight ? move : 0;
         int moveY = initHeight < initWidth ? -move : 0;
         Bitmap croppedImage = null;
@@ -173,7 +165,6 @@ public class CropPhotoActivity extends CameraBaseActivity {
                 finish();
             } catch (Exception e) {
                 e.printStackTrace();
-                toast("裁剪图片异常，请稍后重试", Toast.LENGTH_LONG);
             }
         }
     }

@@ -14,6 +14,7 @@ public class ImageLoaderUtils {
 
     /**
      * display local image
+     *
      * @param uri
      * @param imageView
      * @param options
@@ -24,6 +25,7 @@ public class ImageLoaderUtils {
 
     /**
      * display Drawable image
+     *
      * @param uri
      * @param imageView
      * @param options
@@ -31,7 +33,6 @@ public class ImageLoaderUtils {
     public static void displayDrawableImage(String uri, ImageView imageView, DisplayImageOptions options) {
         ImageLoader.getInstance().displayImage("drawable://" + uri, new ImageViewAware(imageView), options, null, null);
     }
-
 
 
 }

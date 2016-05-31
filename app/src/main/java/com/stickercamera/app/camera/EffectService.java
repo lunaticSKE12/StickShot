@@ -11,6 +11,9 @@ public class EffectService {
 
     private static EffectService mInstance;
 
+    private EffectService() {
+    }
+
     public static EffectService getInst() {
         if (mInstance == null) {
             synchronized (EffectService.class) {
@@ -19,9 +22,6 @@ public class EffectService {
             }
         }
         return mInstance;
-    }
-
-    private EffectService() {
     }
 
     public List<FilterEffect> getLocalFilters() {

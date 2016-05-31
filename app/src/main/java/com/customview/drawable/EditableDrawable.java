@@ -15,33 +15,33 @@ public interface EditableDrawable {
 
     public CharSequence getText();
 
-    public void setText(CharSequence paramCharSequence);
-
     public void setText(String paramString);
+
+    public void setText(CharSequence paramCharSequence);
 
     public void setTextHint(CharSequence paramCharSequence);
 
-    public void setTextHint(String paramString);
-
     public boolean isTextHint();
+
+    public void setTextHint(String paramString);
 
     public void setBounds(float paramFloat1, float paramFloat2, float paramFloat3, float paramFloat4);
 
-    public void setTextColor(int paramInt);
-
     public int getTextColor();
+
+    public void setTextColor(int paramInt);
 
     public float getTextSize();
 
     public float getFontMetrics(Paint.FontMetrics paramFontMetrics);
 
-    public void setTextStrokeColor(int paramInt);
-
     public int getTextStrokeColor();
 
-    public void setStrokeEnabled(boolean paramBoolean);
+    public void setTextStrokeColor(int paramInt);
 
     public boolean getStrokeEnabled();
+
+    public void setStrokeEnabled(boolean paramBoolean);
 
     public int getNumLines();
 

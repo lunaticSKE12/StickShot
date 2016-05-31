@@ -1,7 +1,5 @@
 package com.customview;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -27,16 +25,16 @@ import com.stickercamera.app.model.TagItem;
  */
 public class LabelView extends LinearLayout {
 
+    private static final int ANIMATIONEACHOFFSET = 600;
     private TagItem tagInfo = new TagItem();
     private float parentWidth = 0;
     private float parentHeight = 0;
     private ImageView labelIcon;
     private TextView labelTxtLeft;
     private TextView labelTxtRight;
-
-    public TagItem getTagInfo() {
-        return tagInfo;
-    }
+    private int left = -1, top = -1;
+    private int imageWidth = 0;
+    private boolean emptyItem = false;
 
     public LabelView(Context context) {
         super(context);
@@ -52,6 +50,10 @@ public class LabelView extends LinearLayout {
         labelIcon = (ImageView) findViewById(R.id.label_icon);
         labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
         labelTxtRight = (TextView) findViewById(R.id.label_text_right);
+    }
+
+    public TagItem getTagInfo() {
+        return tagInfo;
     }
 
     public void init(TagItem tagItem) {
@@ -168,20 +170,13 @@ public class LabelView extends LinearLayout {
         setLayoutParams(params);
     }
 
-    private void setImageWidth(int width) {
-        this.imageWidth = width;
-    }
-
     private int getImageWidth() {
         return imageWidth <= 0 ? App.getApp().getScreenWidth() : imageWidth;
     }
 
-    private int left = -1, top = -1;
-    private int imageWidth = 0;
-
-    private static final int ANIMATIONEACHOFFSET = 600;
-
-    private boolean emptyItem = false;
+    private void setImageWidth(int width) {
+        this.imageWidth = width;
+    }
 
     public void setEmpty() {
         emptyItem = true;

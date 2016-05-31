@@ -1,42 +1,43 @@
 package com.stickercamera.app.model;
 
 
-
 import java.io.Serializable;
 
 public class TagItem implements Serializable {
     private static final long serialVersionUID = 2685507991821634905L;
-    private long              id;
-    private int               type;
-    private String            name;
-    private double            x                = -1;
-    private double            y                = -1;
+    private long id;
+    private int type;
+    private String name;
+    private double x = -1;
+    private double y = -1;
 
     private int recordCount;
-    private boolean           left             = true;
-    
-    
-    public boolean isLeft() {
-        return left;
-    }
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-    public int getRecordCount() {
-		return recordCount;
-	}
+    private boolean left = true;
 
-	public void setRecordCount(int recordCount) {
-		this.recordCount = recordCount;
-	}
 
-	public TagItem() {
+    public TagItem() {
 
     }
 
     public TagItem(int type, String label) {
         this.type = type;
         this.name = label;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
     }
 
     public long getId() {

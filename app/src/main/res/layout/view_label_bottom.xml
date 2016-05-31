@@ -9,11 +9,11 @@
         android:id="@+id/tag_input_tips"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
         android:text="Common Tags"
         android:textColor="#9b6b6c"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:padding="10dp"/>
+        android:textSize="16sp" />
 
     <View
         android:id="@+id/split_line"
@@ -29,31 +29,31 @@
 
         <TextView
             style="@style/text_default"
-            android:text="It's just a label"/>
+            android:text="It's just a label" />
 
         <TextView
             style="@style/text_default"
-            android:text="nice"/>
+            android:text="nice" />
 
         <TextView
             style="@style/text_default"
-            android:text="cute"/>
+            android:text="cute" />
 
         <TextView
             style="@style/text_default"
-            android:text="Ha ha ha ha"/>
+            android:text="Ha ha ha ha" />
 
         <TextView
             style="@style/text_default"
-            android:text="I do not know what the recommended"/>
+            android:text="I do not know what the recommended" />
 
         <TextView
             style="@style/text_default"
-            android:text="\@Dada Dadasky"/>
+            android:text="\@Dada Dadasky" />
 
         <TextView
             style="@style/text_default"
-            android:text="Hello , summer"/>
+            android:text="Hello , summer" />
 
     </com.customview.FlowLayout>
 

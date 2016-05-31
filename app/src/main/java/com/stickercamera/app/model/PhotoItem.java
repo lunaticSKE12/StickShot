@@ -3,16 +3,24 @@ package com.stickercamera.app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * @author tongqian.ni
- *
- */
+
 public class PhotoItem implements Parcelable, Comparable<PhotoItem> {
 
-    private String  imageUri;
-    private long    date;
+    public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
+        @Override
+        public PhotoItem[] newArray(int size) {
+            return new PhotoItem[size];
+        }
+
+        @Override
+        public PhotoItem createFromParcel(Parcel in) {
+            return new PhotoItem(in);
+        }
+    };
+    private String imageUri;
+    private long date;
     private boolean checked;
-    private String  dateStr;
+    private String dateStr;
     private boolean uploaded;
 
     public PhotoItem(String uri, long date) {
@@ -20,15 +28,20 @@ public class PhotoItem implements Parcelable, Comparable<PhotoItem> {
         this.date = date;
         this.uploaded = false;
     }
+
+
+    public PhotoItem(Parcel in) {
+        imageUri = in.readString();
+        date = in.readLong();
+    }
+
     public boolean isUploaded() {
         return uploaded;
     }
 
-
     public void setUploaded(boolean uploaded) {
         this.uploaded = uploaded;
     }
-
 
     public boolean isChecked() {
         return checked;
@@ -71,23 +84,6 @@ public class PhotoItem implements Parcelable, Comparable<PhotoItem> {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(imageUri);
         dest.writeLong(date);
-    }
-
-    public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
-                                                                  @Override
-                                                                  public PhotoItem[] newArray(int size) {
-                                                                      return new PhotoItem[size];
-                                                                  }
-
-                                                                  @Override
-                                                                  public PhotoItem createFromParcel(Parcel in) {
-                                                                      return new PhotoItem(in);
-                                                                  }
-                                                              };
-
-    public PhotoItem(Parcel in) {
-        imageUri = in.readString();
-        date = in.readLong();
     }
 
     @Override

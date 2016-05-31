@@ -6,15 +6,11 @@ import com.common.util.StringUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * @author tongqian.ni
- *
- */
 public class Album implements Serializable {
 
-    private static final long    serialVersionUID = 5702699517846159671L;
-    private String               albumUri;
-    private String               title;
+    private static final long serialVersionUID = 5702699517846159671L;
+    private String albumUri;
+    private String title;
     private ArrayList<PhotoItem> photos;
 
     public Album(String title, String uri, ArrayList<PhotoItem> photos) {

@@ -68,6 +68,26 @@ public class GPUImageFilter {
         mFragmentShader = fragmentShader;
     }
 
+    public static String loadShader(String file, Context context) {
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream ims = assetManager.open(file);
+
+            String re = convertStreamToString(ims);
+            ims.close();
+            return re;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
     public final void init() {
         onInit();
         mIsInitialized = true;
@@ -127,7 +147,8 @@ public class GPUImageFilter {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
-    protected void onDrawArraysPre() {}
+    protected void onDrawArraysPre() {
+    }
 
     protected void runPendingOnDrawTasks() {
         while (!mRunOnDraw.isEmpty()) {
@@ -254,25 +275,5 @@ public class GPUImageFilter {
         synchronized (mRunOnDraw) {
             mRunOnDraw.addLast(runnable);
         }
-    }
-
-    public static String loadShader(String file, Context context) {
-        try {
-            AssetManager assetManager = context.getAssets();
-            InputStream ims = assetManager.open(file);
-
-            String re = convertStreamToString(ims);
-            ims.close();
-            return re;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
-    public static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 }

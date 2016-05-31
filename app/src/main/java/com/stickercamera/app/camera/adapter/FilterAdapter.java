@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.github.skykai.stickercamera.R;
 import com.stickercamera.app.camera.effect.FilterEffect;
 import com.stickercamera.app.camera.util.GPUImageFilterTools;
@@ -18,30 +17,27 @@ import java.util.List;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
-/**
- * @author tongqian.ni
- *
- */
+
 public class FilterAdapter extends BaseAdapter {
 
     List<FilterEffect> filterUris;
-    Context            mContext;
-    private Bitmap     background;
+    Context mContext;
+    private Bitmap background;
 
-    private int        selectFilter = 0;
+    private int selectFilter = 0;
 
-    public void setSelectFilter(int selectFilter) {
-        this.selectFilter = selectFilter;
+    public FilterAdapter(Context context, List<FilterEffect> effects, Bitmap backgroud) {
+        filterUris = effects;
+        mContext = context;
+        this.background = backgroud;
     }
 
     public int getSelectFilter() {
         return selectFilter;
     }
 
-    public FilterAdapter(Context context, List<FilterEffect> effects, Bitmap backgroud) {
-        filterUris = effects;
-        mContext = context;
-        this.background = backgroud;
+    public void setSelectFilter(int selectFilter) {
+        this.selectFilter = selectFilter;
     }
 
     @Override
@@ -86,7 +82,7 @@ public class FilterAdapter extends BaseAdapter {
 
     class EffectHolder {
         GPUImageView filteredImg;
-        TextView     filterName;
+        TextView filterName;
     }
 
 }

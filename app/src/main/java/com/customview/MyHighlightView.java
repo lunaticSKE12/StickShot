@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,96 +24,60 @@ import com.stickercamera.app.camera.util.UIUtils;
 
 public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
+    public static final int NONE = 1 << 0;                                     // 1
+    public static final int GROW_LEFT_EDGE = 1 << 1;                                     // 2
+
+    ;
+    public static final int GROW_RIGHT_EDGE = 1 << 2;                                     // 4
+    public static final int GROW_TOP_EDGE = 1 << 3;                                     // 8
+    public static final int GROW_BOTTOM_EDGE = 1 << 4;                                     // 16
+    public static final int ROTATE = 1 << 5;                                     // 32
+    public static final int MOVE = 1 << 6;                                     // 64
+    public static final int GROW = GROW_TOP_EDGE | GROW_BOTTOM_EDGE
+            | GROW_LEFT_EDGE | GROW_RIGHT_EDGE;
     static final String LOG_TAG = "drawable-view";
-
-    public static enum AlignModeV {
-        Top, Bottom, Center
-    };
-
-    public interface OnDeleteClickListener {
-        void onDeleteClick();
-    }
-
-    private int                   STATE_NONE                 = 1 << 0;
-    private int                   STATE_SELECTED             = 1 << 1;
-    private int                   STATE_FOCUSED              = 1 << 2;
-
-    private OnDeleteClickListener mDeleteClickListener;
-
-    public static final int       NONE                       = 1 << 0;                                     // 1
-    public static final int       GROW_LEFT_EDGE             = 1 << 1;                                     // 2
-    public static final int       GROW_RIGHT_EDGE            = 1 << 2;                                     // 4
-    public static final int       GROW_TOP_EDGE              = 1 << 3;                                     // 8
-    public static final int       GROW_BOTTOM_EDGE           = 1 << 4;                                     // 16
-    public static final int       ROTATE                     = 1 << 5;                                     // 32
-    public static final int       MOVE                       = 1 << 6;                                     // 64
-
-    public static final int       GROW                       = GROW_TOP_EDGE | GROW_BOTTOM_EDGE
-                                                               | GROW_LEFT_EDGE | GROW_RIGHT_EDGE;
-
-    private static final float    HIT_TOLERANCE              = 40f;
-
-    private boolean               mHidden;
-    private int                   mMode;
-    private int                   mState                     = STATE_NONE;
-    private RectF                 mDrawRect;
-    private final RectF           mTempRect                  = new RectF();
-    private RectF                 mCropRect;
-    private Matrix                mMatrix;
-    private FeatherDrawable       mContent;
-    private EditableDrawable      mEditableContent;
-    private Drawable              mAnchorRotate;
-    private Drawable              mAnchorDelete;
-    private Drawable              mBackgroundDrawable;
-    private int                   mAnchorRotateWidth;
-    private int                   mAnchorRotateHeight;
-    private int                   mAnchorDeleteHeight;
-    private int                   mAnchorDeleteWidth;
-    private int                   mResizeEdgeMode;
-
-    private boolean               mRotateEnabled;
-    private boolean               mScaleEnabled;
-    private boolean               mMoveEnabled;
-
-    private float                 mRotation                  = 0;
-    private float                 mRatio                     = 1f;
-    private Matrix                mRotateMatrix              = new Matrix();
-    private final float           fpoints[]                  = new float[] { 0, 0 };
-
-    private int                   mPadding                   = 0;
-    private boolean               mShowAnchors               = true;
-    private AlignModeV            mAlignVerticalMode         = AlignModeV.Center;
-    private ImageViewTouch        mContext;
-
-    private static final int[]    STATE_SET_NONE             = new int[] {};
-    private static final int[]    STATE_SET_SELECTED         = new int[] { android.R.attr.state_selected };
-    private static final int[]    STATE_SET_SELECTED_PRESSED = new int[] {
-            android.R.attr.state_selected, android.R.attr.state_pressed };
-    private static final int[]    STATE_SET_SELECTED_FOCUSED = new int[] { android.R.attr.state_focused };
-
+    private static final float HIT_TOLERANCE = 40f;
+    private static final int[] STATE_SET_NONE = new int[]{};
+    private static final int[] STATE_SET_SELECTED = new int[]{android.R.attr.state_selected};
+    private static final int[] STATE_SET_SELECTED_PRESSED = new int[]{
+            android.R.attr.state_selected, android.R.attr.state_pressed};
+    private static final int[] STATE_SET_SELECTED_FOCUSED = new int[]{android.R.attr.state_focused};
+    private final RectF mTempRect = new RectF();
+    private final float fpoints[] = new float[]{0, 0};
     private final Paint outlinePaint = new Paint();
+    RectF mInvalidateRectF = new RectF();
+    Rect mInvalidateRect = new Rect();
+    private int STATE_NONE = 1 << 0;
+    private int STATE_SELECTED = 1 << 1;
+    private int STATE_FOCUSED = 1 << 2;
+    private OnDeleteClickListener mDeleteClickListener;
+    private boolean mHidden;
+    private int mMode;
+    private int mState = STATE_NONE;
+    private RectF mDrawRect;
+    private RectF mCropRect;
+    private Matrix mMatrix;
+    private FeatherDrawable mContent;
+    private EditableDrawable mEditableContent;
+    private Drawable mAnchorRotate;
+    private Drawable mAnchorDelete;
+    private Drawable mBackgroundDrawable;
+    private int mAnchorRotateWidth;
+    private int mAnchorRotateHeight;
+    private int mAnchorDeleteHeight;
+    private int mAnchorDeleteWidth;
+    private int mResizeEdgeMode;
+    private boolean mRotateEnabled;
+    private boolean mScaleEnabled;
+    private boolean mMoveEnabled;
+    private float mRotation = 0;
+    private float mRatio = 1f;
+    private Matrix mRotateMatrix = new Matrix();
+    private int mPadding = 0;
+    private boolean mShowAnchors = true;
+    private AlignModeV mAlignVerticalMode = AlignModeV.Center;
+    private ImageViewTouch mContext;
     private Path outlinePath;
-
-    public void setMoveable(boolean moveable) {
-        this.mMoveEnabled = moveable;
-    }
-
-    public void setScaleable(boolean scaleable) {
-        this.mScaleEnabled = scaleable;
-        if (scaleable) {
-            mAnchorRotate = App.getApp().getResources().getDrawable(R.drawable.aviary_resize_knob);
-        } else {
-            mAnchorRotate = null;
-        }
-    }
-
-    public void setDeleteable(boolean deleteable) {
-        if (deleteable) {
-            mAnchorDelete = App.getApp().getResources().getDrawable(R.drawable.aviary_delete_knob);
-        } else {
-            mAnchorDelete = null;
-        }
-    }
 
     public MyHighlightView(ImageView context, int styleId, FeatherDrawable content) {
         mContent = content;
@@ -153,6 +116,27 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         }
     }
 
+    public void setMoveable(boolean moveable) {
+        this.mMoveEnabled = moveable;
+    }
+
+    public void setScaleable(boolean scaleable) {
+        this.mScaleEnabled = scaleable;
+        if (scaleable) {
+            mAnchorRotate = App.getApp().getResources().getDrawable(R.drawable.aviary_resize_knob);
+        } else {
+            mAnchorRotate = null;
+        }
+    }
+
+    public void setDeleteable(boolean deleteable) {
+        if (deleteable) {
+            mAnchorDelete = App.getApp().getResources().getDrawable(R.drawable.aviary_delete_knob);
+        } else {
+            mAnchorDelete = null;
+        }
+    }
+
     public void setAlignModeV(AlignModeV mode) {
         mAlignVerticalMode = mode;
     }
@@ -184,7 +168,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
         if (null != mBackgroundDrawable) {
             mBackgroundDrawable.setBounds((int) mTempRect.left, (int) mTempRect.top,
-                (int) mTempRect.right, (int) mTempRect.bottom);
+                    (int) mTempRect.right, (int) mTempRect.bottom);
             mBackgroundDrawable.draw(canvas);
         }
 
@@ -193,10 +177,10 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
         if (mEditableContent != null) {
             mEditableContent.setBounds(mDrawRect.left, mDrawRect.top, mDrawRect.right,
-                mDrawRect.bottom);
+                    mDrawRect.bottom);
         } else {
             mContent.setBounds((int) mDrawRect.left, (int) mDrawRect.top, (int) mDrawRect.right,
-                (int) mDrawRect.bottom);
+                    (int) mDrawRect.bottom);
         }
 
         mContent.draw(canvas);
@@ -218,14 +202,14 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
                 if (mAnchorRotate != null) {
                     mAnchorRotate.setBounds(right - mAnchorRotateWidth, bottom
-                                                                        - mAnchorRotateHeight,
-                        right + mAnchorRotateWidth, bottom + mAnchorRotateHeight);
+                                    - mAnchorRotateHeight,
+                            right + mAnchorRotateWidth, bottom + mAnchorRotateHeight);
                     mAnchorRotate.draw(canvas);
                 }
 
                 if (mAnchorDelete != null) {
                     mAnchorDelete.setBounds(left - mAnchorDeleteWidth, top - mAnchorDeleteHeight,
-                        left + mAnchorDeleteWidth, top + mAnchorDeleteHeight);
+                            left + mAnchorDeleteWidth, top + mAnchorDeleteHeight);
                     mAnchorDelete.draw(canvas);
                 }
 
@@ -250,7 +234,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         canvas.concat(mRotateMatrix);
 
         mContent.setBounds((int) mDrawRect.left, (int) mDrawRect.top, (int) mDrawRect.right,
-            (int) mDrawRect.bottom);
+                (int) mDrawRect.bottom);
         mContent.draw(canvas);
 
         canvas.restoreToCount(saveCount);
@@ -258,7 +242,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
     public Rect getCropRect() {
         return new Rect((int) mCropRect.left, (int) mCropRect.top, (int) mCropRect.right,
-            (int) mCropRect.bottom);
+                (int) mCropRect.bottom);
     }
 
     public RectF getCropRectF() {
@@ -293,7 +277,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         final RectF rect = new RectF(mDrawRect);
         rect.inset(-mPadding, -mPadding);
 
-        final float pts[] = new float[] { x, y };
+        final float pts[] = new float[]{x, y};
 
         final Matrix rotateMatrix = new Matrix();
         rotateMatrix.postTranslate(-rect.centerX(), -rect.centerY());
@@ -306,9 +290,9 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
         int retval = NONE;
         final boolean verticalCheck = (y >= (rect.top - HIT_TOLERANCE))
-                                      && (y < (rect.bottom + HIT_TOLERANCE));
+                && (y < (rect.bottom + HIT_TOLERANCE));
         final boolean horizCheck = (x >= (rect.left - HIT_TOLERANCE))
-                                   && (x < (rect.right + HIT_TOLERANCE));
+                && (x < (rect.right + HIT_TOLERANCE));
 
         // if horizontal and vertical checks are good then
         // at least the move edge is selected
@@ -319,29 +303,29 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         if (mScaleEnabled) {
             Log.d(LOG_TAG, "scale enabled");
             if ((Math.abs(rect.left - x) < HIT_TOLERANCE) && verticalCheck
-                && UIUtils.checkBits(mResizeEdgeMode, GROW_LEFT_EDGE)) {
+                    && UIUtils.checkBits(mResizeEdgeMode, GROW_LEFT_EDGE)) {
                 Log.d(LOG_TAG, "left");
                 retval |= GROW_LEFT_EDGE;
             }
             if ((Math.abs(rect.right - x) < HIT_TOLERANCE) && verticalCheck
-                && UIUtils.checkBits(mResizeEdgeMode, GROW_RIGHT_EDGE)) {
+                    && UIUtils.checkBits(mResizeEdgeMode, GROW_RIGHT_EDGE)) {
                 Log.d(LOG_TAG, "right");
                 retval |= GROW_RIGHT_EDGE;
             }
             if ((Math.abs(rect.top - y) < HIT_TOLERANCE) && horizCheck
-                && UIUtils.checkBits(mResizeEdgeMode, GROW_TOP_EDGE)) {
+                    && UIUtils.checkBits(mResizeEdgeMode, GROW_TOP_EDGE)) {
                 Log.d(LOG_TAG, "top");
                 retval |= GROW_TOP_EDGE;
             }
             if ((Math.abs(rect.bottom - y) < HIT_TOLERANCE) && horizCheck
-                && UIUtils.checkBits(mResizeEdgeMode, GROW_BOTTOM_EDGE)) {
+                    && UIUtils.checkBits(mResizeEdgeMode, GROW_BOTTOM_EDGE)) {
                 Log.d(LOG_TAG, "bottom");
                 retval |= GROW_BOTTOM_EDGE;
             }
         }
 
         if ((mRotateEnabled || mScaleEnabled) && (Math.abs(rect.right - x) < HIT_TOLERANCE)
-            && (Math.abs(rect.bottom - y) < HIT_TOLERANCE) && verticalCheck && horizCheck) {
+                && (Math.abs(rect.bottom - y) < HIT_TOLERANCE) && verticalCheck && horizCheck) {
             retval = ROTATE;
         }
 
@@ -358,7 +342,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         final RectF rect = new RectF(mDrawRect);
         rect.inset(-mPadding, -mPadding);
 
-        final float pts[] = new float[] { x, y };
+        final float pts[] = new float[]{x, y};
 
         final Matrix rotateMatrix = new Matrix();
         rotateMatrix.postTranslate(-rect.centerX(), -rect.centerY());
@@ -372,13 +356,13 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         // mContext.invalidate();
 
         final boolean verticalCheck = (y >= (rect.top - HIT_TOLERANCE))
-                                      && (y < (rect.bottom + HIT_TOLERANCE));
+                && (y < (rect.bottom + HIT_TOLERANCE));
         final boolean horizCheck = (x >= (rect.left - HIT_TOLERANCE))
-                                   && (x < (rect.right + HIT_TOLERANCE));
+                && (x < (rect.right + HIT_TOLERANCE));
 
         if (mAnchorDelete != null) {
             if ((Math.abs(rect.left - x) < HIT_TOLERANCE)
-                && (Math.abs(rect.top - y) < HIT_TOLERANCE) && verticalCheck && horizCheck) {
+                    && (Math.abs(rect.top - y) < HIT_TOLERANCE) && verticalCheck && horizCheck) {
                 if (mDeleteClickListener != null) {
                     mDeleteClickListener.onDeleteClick();
                 }
@@ -386,16 +370,13 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         }
     }
 
-    RectF mInvalidateRectF = new RectF();
-    Rect  mInvalidateRect  = new Rect();
-
     public Rect getInvalidationRect() {
         mInvalidateRectF.set(mDrawRect);
         mInvalidateRectF.inset(-mPadding, -mPadding);
         mRotateMatrix.mapRect(mInvalidateRectF);
 
         mInvalidateRect.set((int) mInvalidateRectF.left, (int) mInvalidateRectF.top,
-            (int) mInvalidateRectF.right, (int) mInvalidateRectF.bottom);
+                (int) mInvalidateRectF.right, (int) mInvalidateRectF.bottom);
 
         int w = Math.max(mAnchorRotateWidth, mAnchorDeleteWidth);
         int h = Math.max(mAnchorRotateHeight, mAnchorDeleteHeight);
@@ -410,6 +391,14 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
     public int getMode() {
         return mMode;
+    }
+
+    public void setMode(final int mode) {
+        Log.i(LOG_TAG, "setMode: " + mode);
+        if (mode != mMode) {
+            mMode = mode;
+            updateDrawableState();
+        }
     }
 
     public float getRotation() {
@@ -463,7 +452,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
         if (edge == MOVE) {
             moveBy(dx * (mCropRect.width() / mDrawRect.width()),
-                dy * (mCropRect.height() / mDrawRect.height()));
+                    dy * (mCropRect.height() / mDrawRect.height()));
         } else if (edge == ROTATE) {
             dx = fpoints[0];
             dy = fpoints[1];
@@ -517,7 +506,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
 
     void onMove(float dx, float dy) {
         moveBy(dx * (mCropRect.width() / mDrawRect.width()),
-            dy * (mCropRect.height() / mDrawRect.height()));
+                dy * (mCropRect.height() / mDrawRect.height()));
     }
 
     public void invalidate() {
@@ -545,9 +534,9 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         if (!mRotateEnabled && !mScaleEnabled)
             return;
 
-        final float pt1[] = new float[] { mDrawRect.centerX(), mDrawRect.centerY() };
-        final float pt2[] = new float[] { mDrawRect.right, mDrawRect.bottom };
-        final float pt3[] = new float[] { dx, dy };
+        final float pt1[] = new float[]{mDrawRect.centerX(), mDrawRect.centerY()};
+        final float pt2[] = new float[]{mDrawRect.right, mDrawRect.bottom};
+        final float pt3[] = new float[]{dx, dy};
 
         final double angle1 = Point2D.angleBetweenPoints(pt2, pt1);
         final double angle2 = Point2D.angleBetweenPoints(pt3, pt1);
@@ -561,7 +550,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
             final Matrix rotateMatrix = new Matrix();
             rotateMatrix.postRotate(-mRotation);
 
-            final float points[] = new float[] { diffx, diffy };
+            final float points[] = new float[]{diffx, diffy};
             rotateMatrix.mapPoints(points);
 
             diffx = points[0];
@@ -570,7 +559,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
             final float xDelta = diffx * (mCropRect.width() / mDrawRect.width());
             final float yDelta = diffy * (mCropRect.height() / mDrawRect.height());
 
-            final float pt4[] = new float[] { mDrawRect.right + xDelta, mDrawRect.bottom + yDelta };
+            final float pt4[] = new float[]{mDrawRect.right + xDelta, mDrawRect.bottom + yDelta};
             final double distance1 = Point2D.distance(pt1, pt2);
             final double distance2 = Point2D.distance(pt1, pt4);
             final float distance = (float) (distance2 - distance1);
@@ -601,14 +590,6 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
             mContent.setMinSize(size, size / mRatio);
         } else {
             mContent.setMinSize(size * mRatio, size);
-        }
-    }
-
-    public void setMode(final int mode) {
-        Log.i(LOG_TAG, "setMode: " + mode);
-        if (mode != mMode) {
-            mMode = mode;
-            updateDrawableState();
         }
     }
 
@@ -645,6 +626,10 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         mDeleteClickListener = listener;
     }
 
+    public boolean isSelected() {
+        return (mState & STATE_SELECTED) == STATE_SELECTED;
+    }
+
     public void setSelected(final boolean selected) {
         Log.d(LOG_TAG, "setSelected: " + selected);
         boolean is_selected = isSelected();
@@ -654,8 +639,8 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         }
     }
 
-    public boolean isSelected() {
-        return (mState & STATE_SELECTED) == STATE_SELECTED;
+    public boolean isFocused() {
+        return (mState & STATE_FOCUSED) == STATE_FOCUSED;
     }
 
     public void setFocused(final boolean value) {
@@ -673,10 +658,6 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
             }
             updateDrawableState();
         }
-    }
-
-    public boolean isFocused() {
-        return (mState & STATE_FOCUSED) == STATE_FOCUSED;
     }
 
     public void setup(final Context context, final Matrix m, final Rect imageRect,
@@ -742,7 +723,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
             float dx = textWidth - textRect.width();
             float dy = textHeight - textRect.height();
 
-            float[] fpoints = new float[] { dx, dy };
+            float[] fpoints = new float[]{dx, dy};
 
             Matrix rotateMatrix = new Matrix();
             rotateMatrix.postRotate(-mRotation);
@@ -774,7 +755,7 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
         if (content.equals(mEditableContent) && null != mContext) {
 
             if (mDrawRect.left != left || mDrawRect.top != top || mDrawRect.right != right
-                || mDrawRect.bottom != bottom) {
+                    || mDrawRect.bottom != bottom) {
                 if (forceUpdate()) {
                     mContext.invalidate(getInvalidationRect());
                 } else {
@@ -782,5 +763,13 @@ public class MyHighlightView implements EditableDrawable.OnSizeChange {
                 }
             }
         }
+    }
+
+    public static enum AlignModeV {
+        Top, Bottom, Center
+    }
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick();
     }
 }

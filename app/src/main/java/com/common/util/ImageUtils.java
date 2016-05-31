@@ -2,7 +2,6 @@ package com.common.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -91,7 +89,6 @@ public class ImageUtils {
         IOUtil.closeStream(outputStream);
         return jpgFile.getPath();
     }
-
 
 
     //从文件中读取Bitmap
@@ -220,12 +217,12 @@ public class ImageUtils {
     public static Map<String, Album> findGalleries(Context mContext, List<String> paths, long babyId) {
         paths.clear();
         paths.add(FileUtils.getInst().getSystemPhotoPath());
-        String[] projection = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.DATE_ADDED };//FIXME 拍照时间为新增照片时间
+        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.DATE_ADDED};//FIXME 拍照时间为新增照片时间
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,//指定所要查询的字段
                 MediaStore.Images.Media.SIZE + ">?",//查询条件
-                new String[] { "100000" }, //查询条件中问号对应的值
+                new String[]{"100000"}, //查询条件中问号对应的值
                 MediaStore.Images.Media.DATE_ADDED + " desc");
 
         cursor.moveToFirst();
@@ -260,20 +257,47 @@ public class ImageUtils {
         return galleries;
     }
 
+    public static void asyncLoadImage(Context context, Uri imageUri, LoadImageCallback callback) {
+        new LoadImageUriTask(context, imageUri, callback).execute();
+    }
 
+    //异步加载缩略图
+    public static void asyncLoadSmallImage(Context context, Uri imageUri, LoadImageCallback callback) {
+        new LoadSmallPicTask(context, imageUri, callback).execute();
+    }
+
+    //得到指定大小的Bitmap对象
+    public static Bitmap getResizedBitmap(Context context, Uri imageUri, int width, int height) {
+        InputStream inputStream = null;
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+
+            inputStream = context.getContentResolver().openInputStream(imageUri);
+            BitmapFactory.decodeStream(inputStream, null, options);
+
+            options.outWidth = width;
+            options.outHeight = height;
+            options.inJustDecodeBounds = false;
+            IOUtil.closeStream(inputStream);
+            inputStream = context.getContentResolver().openInputStream(imageUri);
+            return BitmapFactory.decodeStream(inputStream, null, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtil.closeStream(inputStream);
+        }
+        return null;
+    }
 
     //异步加载图片
     public static interface LoadImageCallback {
         public void callback(Bitmap result);
     }
 
-    public static void asyncLoadImage(Context context, Uri imageUri, LoadImageCallback callback) {
-        new LoadImageUriTask(context, imageUri, callback).execute();
-    }
-
     private static class LoadImageUriTask extends AsyncTask<Void, Void, Bitmap> {
-        private final Uri         imageUri;
-        private final Context     context;
+        private final Uri imageUri;
+        private final Context context;
         private LoadImageCallback callback;
 
         public LoadImageUriTask(Context context, Uri imageUri, LoadImageCallback callback) {
@@ -306,15 +330,10 @@ public class ImageUtils {
         }
     }
 
-    //异步加载缩略图
-    public static void asyncLoadSmallImage(Context context, Uri imageUri, LoadImageCallback callback) {
-        new LoadSmallPicTask(context, imageUri, callback).execute();
-    }
-
     private static class LoadSmallPicTask extends AsyncTask<Void, Void, Bitmap> {
 
-        private final Uri         imageUri;
-        private final Context     context;
+        private final Uri imageUri;
+        private final Context context;
         private LoadImageCallback callback;
 
         public LoadSmallPicTask(Context context, Uri imageUri, LoadImageCallback callback) {
@@ -334,30 +353,6 @@ public class ImageUtils {
             callback.callback(result);
         }
 
-    }
-
-    //得到指定大小的Bitmap对象
-    public static Bitmap getResizedBitmap(Context context, Uri imageUri, int width, int height) {
-        InputStream inputStream = null;
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-
-            inputStream = context.getContentResolver().openInputStream(imageUri);
-            BitmapFactory.decodeStream(inputStream, null, options);
-
-            options.outWidth = width;
-            options.outHeight = height;
-            options.inJustDecodeBounds = false;
-            IOUtil.closeStream(inputStream);
-            inputStream = context.getContentResolver().openInputStream(imageUri);
-            return BitmapFactory.decodeStream(inputStream, null, options);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            IOUtil.closeStream(inputStream);
-        }
-        return null;
     }
 
 

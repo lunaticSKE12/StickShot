@@ -4,17 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/white"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.customview.CommonTitleBar
         android:id="@+id/title_layout"
         style="@style/head_default"
         app:leftBtnTxt="Cancel"
-        app:titleTxt="Input"
-        app:rightBtnTxt="Save" />
+        app:rightBtnTxt="Save"
+        app:titleTxt="Input" />
 
     <View style="@style/message_divider" />
-    
+
     <EditText
         android:id="@+id/text_input"
         android:layout_width="fill_parent"

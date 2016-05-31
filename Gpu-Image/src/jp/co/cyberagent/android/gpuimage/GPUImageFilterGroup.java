@@ -18,13 +18,14 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.annotation.SuppressLint;
 import android.opengl.GLES20;
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
@@ -35,14 +36,13 @@ import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE
  */
 public class GPUImageFilterGroup extends GPUImageFilter {
 
+    private final FloatBuffer mGLCubeBuffer;
+    private final FloatBuffer mGLTextureBuffer;
+    private final FloatBuffer mGLTextureFlipBuffer;
     protected List<GPUImageFilter> mFilters;
     protected List<GPUImageFilter> mMergedFilters;
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
-
-    private final FloatBuffer mGLCubeBuffer;
-    private final FloatBuffer mGLTextureBuffer;
-    private final FloatBuffer mGLTextureFlipBuffer;
 
     /**
      * Instantiates a new GPUImageFilterGroup with no filters.
@@ -178,7 +178,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
      * @see jp.co.cyberagent.android.gpuimage.GPUImageFilter#onDraw(int,
      * java.nio.FloatBuffer, java.nio.FloatBuffer)
      */
-    @SuppressLint("WrongCall")    
+    @SuppressLint("WrongCall")
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer) {
@@ -211,7 +211,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 }
             }
         }
-     }
+    }
 
     /**
      * Gets the filters.

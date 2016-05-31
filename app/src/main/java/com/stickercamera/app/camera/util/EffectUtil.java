@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.common.util.ImageUtils;
 import com.customview.LabelView;
 import com.customview.MyHighlightView;
 import com.customview.MyImageViewDrawableOverlay;
@@ -26,12 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by sky on 15/7/6.
- */
 public class EffectUtil {
 
-    public static List<Addon> addonList                 = new ArrayList<Addon>();
+    public static List<Addon> addonList = new ArrayList<Addon>();
     private static List<MyHighlightView> hightlistViews = new CopyOnWriteArrayList<MyHighlightView>();
 
     static {
@@ -49,11 +45,6 @@ public class EffectUtil {
         hightlistViews.clear();
     }
 
-    //删除贴纸的回调接口
-    public static interface StickerCallback {
-        public void onRemoveSticker(Addon sticker);
-    }
-
     //添加贴纸
     public static MyHighlightView addStickerImage(final ImageViewTouch processImage,
                                                   Context context, final Addon sticker,
@@ -67,7 +58,6 @@ public class EffectUtil {
         drawable.setMinSize(30, 30);
 
         final MyHighlightView hv = new MyHighlightView(processImage, R.style.AppTheme, drawable);
-        //设置贴纸padding
         hv.setPadding(10);
         hv.setOnDeleteClickListener(new MyHighlightView.OnDeleteClickListener() {
 
@@ -130,7 +120,7 @@ public class EffectUtil {
         Matrix matrix = new Matrix(mImageMatrix);
         matrix.invert(matrix);
 
-        float[] pts = new float[] { x, y, x + cropWidth, y + cropHeight };
+        float[] pts = new float[]{x, y, x + cropWidth, y + cropHeight};
         MatrixUtils.mapPoints(matrix, pts);
 
         RectF cropRect = new RectF(pts[0], pts[1], pts[2], pts[3]);
@@ -143,7 +133,6 @@ public class EffectUtil {
         hightlistViews.add(hv);
         return hv;
     }
-
 
     //----添加标签-----
     public static void addLabelEditable(MyImageViewDrawableOverlay overlay, ViewGroup container,
@@ -174,11 +163,6 @@ public class EffectUtil {
         return (int) (radio * standardDis);
     }
 
-    /**
-     * 使标签在Overlay上可以移动
-     * @param overlay
-     * @param label
-     */
     private static void addLabel2Overlay(final MyImageViewDrawableOverlay overlay,
                                          final LabelView label) {
         //添加事件，触摸生效
@@ -197,7 +181,6 @@ public class EffectUtil {
         });
     }
 
-
     //添加水印
     public static void applyOnSave(Canvas mCanvas, ImageViewTouch processImage) {
         for (MyHighlightView view : hightlistViews) {
@@ -205,7 +188,7 @@ public class EffectUtil {
         }
     }
 
-    private static void applyOnSave(Canvas mCanvas, ImageViewTouch processImage,MyHighlightView view) {
+    private static void applyOnSave(Canvas mCanvas, ImageViewTouch processImage, MyHighlightView view) {
 
         if (view != null && view.getContent() instanceof StickerDrawable) {
 
@@ -226,6 +209,11 @@ public class EffectUtil {
             view.getContent().draw(mCanvas);
             mCanvas.restoreToCount(saveCount);
         }
+    }
+
+    //删除贴纸的回调接口
+    public static interface StickerCallback {
+        public void onRemoveSticker(Addon sticker);
     }
 
 }

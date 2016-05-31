@@ -19,23 +19,47 @@ import com.stickercamera.base.BaseActivity;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-
-/**
- * 编辑文字
- * Created by sky on 2015/7/20.
- * Weibo: http://weibo.com/2030683111
- * Email: 1132234509@qq.com
- */
 public class EditTextActivity extends BaseActivity {
 
-    private final static int MAX        = 10;
-    private int maxlength               = MAX;
+    private final static int MAX = 10;
     @InjectView(R.id.text_input)
     EditText contentView;
     @InjectView(R.id.tag_input_tips)
     TextView numberTips;
+    private int maxlength = MAX;
+    TextWatcher mTextWatcher = new TextWatcher() {
+        private int editStart;
+        private int editEnd;
 
-    public static void openTextEdit(Activity mContext, String defaultStr,int maxLength, int reqCode) {
+        @Override
+        public void beforeTextChanged(CharSequence s, int arg1, int arg2,
+                                      int arg3) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int arg1, int arg2,
+                                  int arg3) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            editStart = contentView.getSelectionStart();
+            editEnd = contentView.getSelectionEnd();
+            if (s.toString().length() > maxlength) {
+                toast("Enter the number of words you have exceeded the limit！", Toast.LENGTH_LONG);
+                s.delete(editStart - 1, editEnd);
+                int tempSelection = editStart;
+                contentView.setText(s);
+                contentView.setSelection(tempSelection);
+            }
+            numberTips.setText("You can enter "
+                    + (maxlength - s.toString().length())
+                    + " characters  (" + s.toString().length() + "/"
+                    + maxlength + ")");
+        }
+    };
+
+    public static void openTextEdit(Activity mContext, String defaultStr, int maxLength, int reqCode) {
         Intent i = new Intent(mContext, EditTextActivity.class);
         i.putExtra(AppConstants.PARAM_EDIT_TEXT, defaultStr);
         if (maxLength != 0) {
@@ -56,7 +80,7 @@ public class EditTextActivity extends BaseActivity {
             contentView.setText(defaultStr);
             if (defaultStr.length() <= maxlength) {
                 numberTips.setText("You can enter " + (maxlength - defaultStr.length()) + " characters  ("
-                                   + defaultStr.length() + "/" + maxlength + ")");
+                        + defaultStr.length() + "/" + maxlength + ")");
             }
         }
         titleBar.setRightBtnOnclickListener(new OnClickListener() {
@@ -71,36 +95,4 @@ public class EditTextActivity extends BaseActivity {
         });
         contentView.addTextChangedListener(mTextWatcher);
     }
-
-    TextWatcher mTextWatcher = new TextWatcher() {
-                                 private int editStart;
-                                 private int editEnd;
-
-                                 @Override
-                                 public void beforeTextChanged(CharSequence s, int arg1, int arg2,
-                                                               int arg3) {
-                                 }
-
-                                 @Override
-                                 public void onTextChanged(CharSequence s, int arg1, int arg2,
-                                                           int arg3) {
-                                 }
-
-                                 @Override
-                                 public void afterTextChanged(Editable s) {
-                                     editStart = contentView.getSelectionStart();
-                                     editEnd = contentView.getSelectionEnd();
-                                     if (s.toString().length() > maxlength) {
-                                         toast("Enter the number of words you have exceeded the limit！", Toast.LENGTH_LONG);
-                                         s.delete(editStart - 1, editEnd);
-                                         int tempSelection = editStart;
-                                         contentView.setText(s);
-                                         contentView.setSelection(tempSelection);
-                                     }
-                                     numberTips.setText("You can enter "
-                                                        + (maxlength - s.toString().length())
-                                                        + " characters  (" + s.toString().length() + "/"
-                                                        + maxlength + ")");
-                                 }
-                             };
 }

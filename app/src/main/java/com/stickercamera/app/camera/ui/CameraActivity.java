@@ -26,7 +26,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.common.util.DistanceUtil;
 import com.common.util.FileUtils;
@@ -56,28 +55,13 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * 相机界面
- * Created by sky on 15/7/6.
- */
 public class CameraActivity extends CameraBaseActivity {
 
-    private CameraHelper mCameraHelper;
-    private Camera.Parameters parameters = null;
-    private Camera cameraInst = null;
-    private Bundle bundle = null;
-    private int photoWidth = DistanceUtil.getCameraPhotoWidth();
-    private int photoNumber = 4;
-    private int photoMargin = App.getApp().dp2px(1);
-    private float pointX, pointY;
-    static final int FOCUS = 1;            // 聚焦
-    static final int ZOOM = 2;            // 缩放
-    private int mode;                      //0是聚焦 1是放大
-    private float dist;
-    private int PHOTO_SIZE = 2000;
-    private int mCurrentCameraId = 0;  //1是前置 0是后置
-    private Handler handler = new Handler();
-
+    static final int FOCUS = 1;
+    static final int ZOOM = 2;
+    private static final int MIN_PREVIEW_PIXELS = 480 * 320;
+    private static final double MAX_ASPECT_DISTORTION = 0.15;
+    private static final String TAG = "Camera";
     @InjectView(R.id.masking)
     CameraGrid cameraGrid;
     @InjectView(R.id.photo_area)
@@ -98,7 +82,23 @@ public class CameraActivity extends CameraBaseActivity {
     View focusIndex;
     @InjectView(R.id.surfaceView)
     SurfaceView surfaceView;
-
+    //放大缩小
+    int curZoomValue = 0;
+    private CameraHelper mCameraHelper;
+    private Camera.Parameters parameters = null;
+    private Camera cameraInst = null;
+    private Bundle bundle = null;
+    private int photoWidth = DistanceUtil.getCameraPhotoWidth();
+    private int photoNumber = 4;
+    private int photoMargin = App.getApp().dp2px(1);
+    private float pointX, pointY;
+    private int mode;
+    private float dist;
+    private int PHOTO_SIZE = 2000;
+    private int mCurrentCameraId = 0;
+    private Handler handler = new Handler();
+    private Camera.Size adapterSize = null;
+    private Camera.Size previewSize = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +118,6 @@ public class CameraActivity extends CameraBaseActivity {
         surfaceView.setBackgroundColor(TRIM_MEMORY_BACKGROUND);
         surfaceView.getHolder().addCallback(new SurfaceCallback());//为SurfaceView的句柄添加一个回调函数
 
-        //设置相机界面,照片列表,以及拍照布局的高度(保证相机预览为正方形)
         ViewGroup.LayoutParams layout = cameraGrid.getLayoutParams();
         layout.height = App.getApp().getScreenWidth();
         layout = photoArea.getLayoutParams();
@@ -128,7 +127,6 @@ public class CameraActivity extends CameraBaseActivity {
                 - App.getApp().getScreenWidth()
                 - DistanceUtil.getCameraPhotoAreaHeight();
 
-        //添加系统相册内的图片
         ArrayList<PhotoItem> sysPhotos = FileUtils.getInst().findPicsInDir(
                 FileUtils.getInst().getSystemPhotoPath());
         int showNumber = sysPhotos.size() > photoNumber ? photoNumber
@@ -168,13 +166,11 @@ public class CameraActivity extends CameraBaseActivity {
     }
 
     private void initEvent() {
-        //拍照
         takePicture.setOnClickListener(v -> {
             try {
                 cameraInst.takePicture(null, null, new MyPictureCallback());
             } catch (Throwable t) {
                 t.printStackTrace();
-                toast("拍照失败，请重试！", Toast.LENGTH_LONG);
                 try {
                     cameraInst.startPreview();
                 } catch (Throwable e) {
@@ -183,36 +179,34 @@ public class CameraActivity extends CameraBaseActivity {
             }
 
         });
-        //闪光灯
+
         flashBtn.setOnClickListener(v -> turnLight(cameraInst));
-        //前后置摄像头切换
+
         boolean canSwitch = false;
         try {
             canSwitch = mCameraHelper.hasFrontCamera() && mCameraHelper.hasBackCamera();
         } catch (Exception e) {
-            //获取相机信息失败
+
         }
         if (!canSwitch) {
             changeBtn.setVisibility(View.GONE);
         } else {
             changeBtn.setOnClickListener(v -> switchCamera());
         }
-        //跳转相册
+
         galleryBtn.setOnClickListener(v -> startActivity(new Intent(CameraActivity.this, AlbumActivity.class)));
-        //返回按钮
+
         backBtn.setOnClickListener(v -> finish());
         surfaceView.setOnTouchListener((v, event) -> {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                // 主点按下
+
                 case MotionEvent.ACTION_DOWN:
                     pointX = event.getX();
                     pointY = event.getY();
                     mode = FOCUS;
                     break;
-                // 副点按下
                 case MotionEvent.ACTION_POINTER_DOWN:
                     dist = spacing(event);
-                    // 如果连续两点距离大于10，则判定为多点模式
                     if (spacing(event) > 10f) {
                         mode = ZOOM;
                     }
@@ -277,9 +271,6 @@ public class CameraActivity extends CameraBaseActivity {
         }
     }
 
-    /**
-     * 两点的距离
-     */
     private float spacing(MotionEvent event) {
         if (event == null) {
             return 0;
@@ -288,9 +279,6 @@ public class CameraActivity extends CameraBaseActivity {
         float y = event.getY(0) - event.getY(1);
         return FloatMath.sqrt(x * x + y * y);
     }
-
-    //放大缩小
-    int curZoomValue = 0;
 
     private void addZoomIn(int delta) {
 
@@ -319,7 +307,6 @@ public class CameraActivity extends CameraBaseActivity {
         }
     }
 
-    //定点对焦的代码
     private void pointFocus(int x, int y) {
         cameraInst.cancelAutoFocus();
         parameters = cameraInst.getParameters();
@@ -334,7 +321,6 @@ public class CameraActivity extends CameraBaseActivity {
     private void showPoint(int x, int y) {
         if (parameters.getMaxNumMeteringAreas() > 0) {
             List<Camera.Area> areas = new ArrayList<Camera.Area>();
-            //xy变换了
             int rectY = -x * 2000 / App.getApp().getScreenWidth() + 1000;
             int rectX = y * 2000 / App.getApp().getScreenHeight() - 1000;
 
@@ -350,92 +336,6 @@ public class CameraActivity extends CameraBaseActivity {
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
     }
 
-    private final class MyPictureCallback implements Camera.PictureCallback {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            bundle = new Bundle();
-            bundle.putByteArray("bytes", data); //将图片字节数据保存在bundle当中，实现数据交换
-            new SavePicTask(data).execute();
-            camera.startPreview(); // 拍完照后，重新开始预览
-        }
-    }
-
-    private class SavePicTask extends AsyncTask<Void, Void, String> {
-        private byte[] data;
-
-        protected void onPreExecute() {
-            showProgressDialog("处理中");
-        }
-
-        ;
-
-        SavePicTask(byte[] data) {
-            this.data = data;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                return saveToSDCard(data);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            if (StringUtils.isNotEmpty(result)) {
-                dismissProgressDialog();
-                    CameraManager.getInst().processPhotoItem(CameraActivity.this,
-                            new PhotoItem(result, System.currentTimeMillis()));
-            } else {
-                toast("拍照失败，请稍后重试！", Toast.LENGTH_LONG);
-            }
-        }
-    }
-
-
-    /*SurfaceCallback*/
-    private final class SurfaceCallback implements SurfaceHolder.Callback {
-
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            try {
-                if (cameraInst != null) {
-                    cameraInst.stopPreview();
-                    cameraInst.release();
-                    cameraInst = null;
-                }
-            } catch (Exception e) {
-                //相机已经关了
-            }
-
-        }
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            if (null == cameraInst) {
-                try {
-                    cameraInst = Camera.open();
-                    cameraInst.setPreviewDisplay(holder);
-                    initCamera();
-                    cameraInst.startPreview();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            autoFocus();
-        }
-    }
-
-    //实现自动对焦
     private void autoFocus() {
         new Thread() {
             @Override
@@ -452,16 +352,12 @@ public class CameraActivity extends CameraBaseActivity {
                     @Override
                     public void onAutoFocus(boolean success, Camera camera) {
                         if (success) {
-                            initCamera();//实现相机的参数初始化
                         }
                     }
                 });
             }
         };
     }
-
-    private Camera.Size adapterSize = null;
-    private Camera.Size previewSize = null;
 
     private void initCamera() {
         parameters = cameraInst.getParameters();
@@ -479,18 +375,18 @@ public class CameraActivity extends CameraBaseActivity {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);//1连续对焦
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         } else {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }
-        setDispaly(parameters, cameraInst);
+        setDisplay(parameters, cameraInst);
         try {
             cameraInst.setParameters(parameters);
         } catch (Exception e) {
             e.printStackTrace();
         }
         cameraInst.startPreview();
-        cameraInst.cancelAutoFocus();// 2如果要实现连续的自动对焦，这一句必须加上
+        cameraInst.cancelAutoFocus();//
     }
 
     private void setUpPicSize(Camera.Parameters parameters) {
@@ -512,21 +408,6 @@ public class CameraActivity extends CameraBaseActivity {
         }
     }
 
-    /**
-     * 最小预览界面的分辨率
-     */
-    private static final int MIN_PREVIEW_PIXELS = 480 * 320;
-    /**
-     * 最大宽高比差
-     */
-    private static final double MAX_ASPECT_DISTORTION = 0.15;
-    private static final String TAG = "Camera";
-
-    /**
-     * 找出最适合的预览界面分辨率
-     *
-     * @return
-     */
     private Camera.Size findBestPreviewResolution() {
         Camera.Parameters cameraParameters = cameraInst.getParameters();
         Camera.Size defaultPreviewResolution = cameraParameters.getPreviewSize();
@@ -536,7 +417,6 @@ public class CameraActivity extends CameraBaseActivity {
             return defaultPreviewResolution;
         }
 
-        // 按照分辨率从大到小排序
         List<Camera.Size> supportedPreviewResolutions = new ArrayList<Camera.Size>(rawSupportedSizes);
         Collections.sort(supportedPreviewResolutions, new Comparator<Camera.Size>() {
             @Override
@@ -561,7 +441,6 @@ public class CameraActivity extends CameraBaseActivity {
         Log.v(TAG, "Supported preview resolutions: " + previewResolutionSb);
 
 
-        // 移除不符合条件的分辨率
         double screenAspectRatio = (double) App.getApp().getScreenWidth()
                 / (double) App.getApp().getScreenHeight();
         Iterator<Camera.Size> it = supportedPreviewResolutions.iterator();
@@ -570,15 +449,11 @@ public class CameraActivity extends CameraBaseActivity {
             int width = supportedPreviewResolution.width;
             int height = supportedPreviewResolution.height;
 
-            // 移除低于下限的分辨率，尽可能取高分辨率
             if (width * height < MIN_PREVIEW_PIXELS) {
                 it.remove();
                 continue;
             }
 
-            // 在camera分辨率与屏幕分辨率宽高比不相等的情况下，找出差距最小的一组分辨率
-            // 由于camera的分辨率是width>height，我们设置的portrait模式中，width<height
-            // 因此这里要先交换然preview宽高比后在比较
             boolean isCandidatePortrait = width > height;
             int maybeFlippedWidth = isCandidatePortrait ? height : width;
             int maybeFlippedHeight = isCandidatePortrait ? width : height;
@@ -589,14 +464,12 @@ public class CameraActivity extends CameraBaseActivity {
                 continue;
             }
 
-            // 找到与屏幕分辨率完全匹配的预览界面分辨率直接返回
             if (maybeFlippedWidth == App.getApp().getScreenWidth()
                     && maybeFlippedHeight == App.getApp().getScreenHeight()) {
                 return supportedPreviewResolution;
             }
         }
 
-        // 如果没有找到合适的，并且还有候选的像素，则设置其中最大比例的，对于配置比较低的机器不太合适
         if (!supportedPreviewResolutions.isEmpty()) {
             Camera.Size largestPreview = supportedPreviewResolutions.get(0);
             return largestPreview;
@@ -609,7 +482,7 @@ public class CameraActivity extends CameraBaseActivity {
 
     private Camera.Size findBestPictureResolution() {
         Camera.Parameters cameraParameters = cameraInst.getParameters();
-        List<Camera.Size> supportedPicResolutions = cameraParameters.getSupportedPictureSizes(); // 至少会返回一个值
+        List<Camera.Size> supportedPicResolutions = cameraParameters.getSupportedPictureSizes();
 
         StringBuilder picResolutionSb = new StringBuilder();
         for (Camera.Size supportedPicResolution : supportedPicResolutions) {
@@ -622,7 +495,7 @@ public class CameraActivity extends CameraBaseActivity {
         Log.d(TAG, "default picture resolution " + defaultPictureResolution.width + "x"
                 + defaultPictureResolution.height);
 
-        // 排序
+
         List<Camera.Size> sortedSupportedPicResolutions = new ArrayList<Camera.Size>(
                 supportedPicResolutions);
         Collections.sort(sortedSupportedPicResolutions, new Comparator<Camera.Size>() {
@@ -640,7 +513,6 @@ public class CameraActivity extends CameraBaseActivity {
             }
         });
 
-        // 移除不符合条件的分辨率
         double screenAspectRatio = (double) App.getApp().getScreenWidth()
                 / (double) App.getApp().getScreenHeight();
         Iterator<Camera.Size> it = sortedSupportedPicResolutions.iterator();
@@ -649,9 +521,6 @@ public class CameraActivity extends CameraBaseActivity {
             int width = supportedPreviewResolution.width;
             int height = supportedPreviewResolution.height;
 
-            // 在camera分辨率与屏幕分辨率宽高比不相等的情况下，找出差距最小的一组分辨率
-            // 由于camera的分辨率是width>height，我们设置的portrait模式中，width<height
-            // 因此这里要先交换然后在比较宽高比
             boolean isCandidatePortrait = width > height;
             int maybeFlippedWidth = isCandidatePortrait ? height : width;
             int maybeFlippedHeight = isCandidatePortrait ? width : height;
@@ -663,18 +532,15 @@ public class CameraActivity extends CameraBaseActivity {
             }
         }
 
-        // 如果没有找到合适的，并且还有候选的像素，对于照片，则取其中最大比例的，而不是选择与屏幕分辨率相同的
+
         if (!sortedSupportedPicResolutions.isEmpty()) {
             return sortedSupportedPicResolutions.get(0);
         }
 
-        // 没有找到合适的，就返回默认的
         return defaultPictureResolution;
     }
 
-
-    //控制图像的正确显示方向
-    private void setDispaly(Camera.Parameters parameters, Camera camera) {
+    private void setDisplay(Camera.Parameters parameters, Camera camera) {
         if (Build.VERSION.SDK_INT >= 8) {
             setDisplayOrientation(camera, 90);
         } else {
@@ -682,7 +548,6 @@ public class CameraActivity extends CameraBaseActivity {
         }
     }
 
-    //实现的图像的正确显示
     private void setDisplayOrientation(Camera camera, int i) {
         Method downPolymorphic;
         try {
@@ -692,21 +557,13 @@ public class CameraActivity extends CameraBaseActivity {
                 downPolymorphic.invoke(camera, new Object[]{i});
             }
         } catch (Exception e) {
-            Log.e("Came_e", "图像出错");
+            Log.e("Came_e", "");
         }
     }
 
-
-    /**
-     * 将拍下来的照片存放在SD卡中
-     *
-     * @param data
-     * @throws IOException
-     */
     public String saveToSDCard(byte[] data) throws IOException {
         Bitmap croppedImage;
 
-        //获得图片大小
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(data, 0, data.length, options);
@@ -760,11 +617,6 @@ public class CameraActivity extends CameraBaseActivity {
         return rotatedImage;
     }
 
-    /**
-     * 闪光灯开关   开->关->自动
-     *
-     * @param mCamera
-     */
     private void turnLight(Camera mCamera) {
         if (mCamera == null || mCamera.getParameters() == null
                 || mCamera.getParameters().getSupportedFlashModes() == null) {
@@ -796,8 +648,6 @@ public class CameraActivity extends CameraBaseActivity {
         }
     }
 
-
-    //切换前后置摄像头
     private void switchCamera() {
         mCurrentCameraId = (mCurrentCameraId + 1) % mCameraHelper.getNumberOfCameras();
         releaseCamera();
@@ -815,9 +665,6 @@ public class CameraActivity extends CameraBaseActivity {
         previewSize = null;
     }
 
-    /**
-     * @param mCurrentCameraId2
-     */
     private void setUpCamera(int mCurrentCameraId2) {
         cameraInst = getCameraInstance(mCurrentCameraId2);
         if (cameraInst != null) {
@@ -829,7 +676,6 @@ public class CameraActivity extends CameraBaseActivity {
                 e.printStackTrace();
             }
         } else {
-            toast("切换失败，请重试！", Toast.LENGTH_LONG);
 
         }
     }
@@ -842,5 +688,86 @@ public class CameraActivity extends CameraBaseActivity {
             e.printStackTrace();
         }
         return c;
+    }
+
+    private final class MyPictureCallback implements Camera.PictureCallback {
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            bundle = new Bundle();
+            bundle.putByteArray("bytes", data);
+            new SavePicTask(data).execute();
+            camera.startPreview();
+        }
+    }
+
+    private class SavePicTask extends AsyncTask<Void, Void, String> {
+        private byte[] data;
+
+        SavePicTask(byte[] data) {
+            this.data = data;
+        }
+
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return saveToSDCard(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            if (StringUtils.isNotEmpty(result)) {
+                dismissProgressDialog();
+                CameraManager.getInst().processPhotoItem(CameraActivity.this,
+                        new PhotoItem(result, System.currentTimeMillis()));
+            } else {
+
+            }
+        }
+    }
+
+    /*SurfaceCallback*/
+    private final class SurfaceCallback implements SurfaceHolder.Callback {
+
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            try {
+                if (cameraInst != null) {
+                    cameraInst.stopPreview();
+                    cameraInst.release();
+                    cameraInst = null;
+                }
+            } catch (Exception e) {
+            }
+
+        }
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            if (null == cameraInst) {
+                try {
+                    cameraInst = Camera.open();
+                    cameraInst.setPreviewDisplay(holder);
+                    initCamera();
+                    cameraInst.startPreview();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            autoFocus();
+        }
     }
 }

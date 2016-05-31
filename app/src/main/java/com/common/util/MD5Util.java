@@ -1,4 +1,3 @@
-
 package com.common.util;
 
 import java.security.MessageDigest;
@@ -8,7 +7,7 @@ public class MD5Util {
 
     /**
      * MD5加密
-     * 
+     *
      * @param val
      * @return
      * @throws NoSuchAlgorithmException
